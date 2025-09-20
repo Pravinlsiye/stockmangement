@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
 import { ProductService } from '../../services/product.service';
 import { Transaction, TransactionType } from '../../models/transaction.model';
@@ -36,6 +37,7 @@ import { Product } from '../../models/product.model';
               <th>Total Amount</th>
               <th>Reference</th>
               <th>Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -47,11 +49,26 @@ import { Product } from '../../models/product.model';
                   {{ transaction.type }}
                 </span>
               </td>
-              <td>{{ transaction.quantity }}</td>
+              <td>
+                <span *ngIf="transaction.type === 'ADJUSTMENT' && transaction.quantity < 0" class="text-danger">
+                  {{ transaction.quantity }}
+                </span>
+                <span *ngIf="transaction.type === 'ADJUSTMENT' && transaction.quantity > 0" class="text-success">
+                  +{{ transaction.quantity }}
+                </span>
+                <span *ngIf="transaction.type !== 'ADJUSTMENT'">
+                  {{ transaction.quantity }}
+                </span>
+              </td>
               <td>₹{{ transaction.unitPrice }}</td>
               <td>₹{{ transaction.totalAmount }}</td>
               <td>{{ transaction.reference }}</td>
               <td>{{ transaction.notes }}</td>
+              <td>
+                <button *ngIf="transaction.type === 'SALE'" class="btn btn-sm btn-primary" (click)="generateBill(transaction)">
+                  <i class="fas fa-file-invoice"></i> Bill
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -96,6 +113,9 @@ import { Product } from '../../models/product.model';
               <div class="form-group">
                 <label>Quantity</label>
                 <input type="number" class="form-control" [(ngModel)]="currentTransaction.quantity" name="quantity" (change)="calculateTotal()" required>
+                <small *ngIf="currentTransaction.type === 'ADJUSTMENT'" class="text-muted">
+                  Use positive number to add stock, negative to reduce stock
+                </small>
               </div>
               <div class="form-group">
                 <label>Unit Price</label>
@@ -138,6 +158,20 @@ import { Product } from '../../models/product.model';
     .page-info {
       font-weight: 500;
     }
+    .text-success {
+      color: #28a745;
+      font-weight: 500;
+    }
+    .text-danger {
+      color: #dc3545;
+      font-weight: 500;
+    }
+    .text-muted {
+      color: #6c757d;
+      font-size: 0.85em;
+      display: block;
+      margin-top: 4px;
+    }
   `]
 })
 export class TransactionListComponent implements OnInit {
@@ -156,7 +190,8 @@ export class TransactionListComponent implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
-    private productService: ProductService
+    private productService: ProductService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -244,13 +279,16 @@ export class TransactionListComponent implements OnInit {
         this.currentTransaction.unitPrice = product.purchasePrice;
       } else if (this.currentTransaction.type === TransactionType.SALE) {
         this.currentTransaction.unitPrice = product.sellingPrice;
+      } else if (this.currentTransaction.type === TransactionType.ADJUSTMENT) {
+        // For adjustments, use purchase price (cost value)
+        this.currentTransaction.unitPrice = product.purchasePrice;
       }
       this.calculateTotal();
     }
   }
 
   calculateTotal(): void {
-    this.currentTransaction.totalAmount = this.currentTransaction.quantity * this.currentTransaction.unitPrice;
+    this.currentTransaction.totalAmount = Math.abs(this.currentTransaction.quantity) * this.currentTransaction.unitPrice;
   }
 
   saveTransaction(): void {
@@ -263,5 +301,11 @@ export class TransactionListComponent implements OnInit {
   closeModal(): void {
     this.showAddModal = false;
     this.currentTransaction = this.initializeTransaction();
+  }
+
+  generateBill(transaction: Transaction): void {
+    if (transaction.id) {
+      this.router.navigate(['/bill', transaction.id]);
+    }
   }
 }

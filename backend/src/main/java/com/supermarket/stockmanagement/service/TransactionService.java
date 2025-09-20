@@ -32,11 +32,24 @@ public class TransactionService {
     
     public Transaction createTransaction(Transaction transaction) {
         transaction.setTransactionDate(LocalDateTime.now());
-        transaction.setTotalAmount(transaction.getQuantity() * transaction.getUnitPrice());
+        transaction.setTotalAmount(Math.abs(transaction.getQuantity()) * transaction.getUnitPrice());
         
         // Update product stock based on transaction type
-        boolean isAddition = transaction.getType() == Transaction.TransactionType.PURCHASE;
-        productService.updateStock(transaction.getProductId(), transaction.getQuantity(), isAddition);
+        switch (transaction.getType()) {
+            case PURCHASE:
+                // Purchases always add to stock
+                productService.updateStock(transaction.getProductId(), Math.abs(transaction.getQuantity()), true);
+                break;
+            case SALE:
+                // Sales always reduce stock
+                productService.updateStock(transaction.getProductId(), Math.abs(transaction.getQuantity()), false);
+                break;
+            case ADJUSTMENT:
+                // Adjustments can add (positive) or reduce (negative) stock
+                boolean isAddition = transaction.getQuantity() > 0;
+                productService.updateStock(transaction.getProductId(), Math.abs(transaction.getQuantity()), isAddition);
+                break;
+        }
         
         return transactionRepository.save(transaction);
     }

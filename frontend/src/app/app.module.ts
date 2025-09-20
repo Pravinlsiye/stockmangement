@@ -11,6 +11,7 @@ import { CategoryListComponent } from './components/category-list/category-list.
 import { SupplierListComponent } from './components/supplier-list/supplier-list.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
+import { BillComponent } from './components/bill/bill.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { NavigationComponent } from './components/navigation/navigation.componen
     CategoryListComponent,
     SupplierListComponent,
     TransactionListComponent,
-    NavigationComponent
+    NavigationComponent,
+    BillComponent
   ],
   imports: [
     BrowserModule,
