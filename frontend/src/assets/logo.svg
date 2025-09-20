@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background Circle -->
+  <circle cx="128" cy="128" r="120" fill="#1976D2"/>
+  
+  <!-- Warehouse/Box Icon -->
+  <g fill="white">
+    <!-- Box Base -->
+    <rect x="60" y="100" width="136" height="100" rx="8" fill="white" opacity="0.9"/>
+    
+    <!-- Box Top/Roof -->
+    <polygon points="128,60 196,100 60,100" fill="white"/>
+    
+    <!-- Box Lines -->
+    <line x1="128" y1="60" x2="128" y2="100" stroke="#1976D2" stroke-width="3"/>
+    <line x1="60" y1="150" x2="196" y2="150" stroke="#1976D2" stroke-width="2"/>
+    
+    <!-- Door -->
+    <rect x="108" y="150" width="40" height="50" fill="#1976D2"/>
+  </g>
+  
+  <!-- Text SP (StockPro) -->
+  <text x="128" y="140" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#1976D2" text-anchor="middle">SP</text>
+</svg>
