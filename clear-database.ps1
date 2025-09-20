@@ -1,11 +1,20 @@
 # Clear Database Script
 # This script clears all data from the MongoDB collections
+# Collections cleared: categories, suppliers, products, product-suppliers, purchase-orders, transactions
 
 $baseUrl = "http://localhost:8080/api"
 
 Write-Host "========================================" -ForegroundColor Red
 Write-Host "Clearing All Database Data" -ForegroundColor Red
 Write-Host "========================================" -ForegroundColor Red
+Write-Host ""
+Write-Host "This will clear:" -ForegroundColor Yellow
+Write-Host "  • All transactions (sales, purchases, adjustments)" -ForegroundColor White
+Write-Host "  • All purchase orders" -ForegroundColor White
+Write-Host "  • All product-supplier relationships" -ForegroundColor White
+Write-Host "  • All products" -ForegroundColor White
+Write-Host "  • All suppliers" -ForegroundColor White
+Write-Host "  • All categories" -ForegroundColor White
 Write-Host ""
 
 # Test connection
@@ -50,6 +59,8 @@ function Clear-Collection {
 
 # Clear all collections in reverse order of dependencies
 Clear-Collection -collectionName "Transactions" -endpoint "transactions"
+Clear-Collection -collectionName "Purchase Orders" -endpoint "purchase-orders"
+Clear-Collection -collectionName "Product-Supplier Relationships" -endpoint "product-suppliers"
 Clear-Collection -collectionName "Products" -endpoint "products"
 Clear-Collection -collectionName "Suppliers" -endpoint "suppliers"
 Clear-Collection -collectionName "Categories" -endpoint "categories"

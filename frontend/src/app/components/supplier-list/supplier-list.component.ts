@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SupplierService } from '../../services/supplier.service';
+import { NotificationService } from '../../services/notification.service';
 import { Supplier } from '../../models/supplier.model';
 
 @Component({
@@ -122,7 +123,10 @@ export class SupplierListComponent implements OnInit {
   itemsPerPage = 10;
   totalPages = 0;
 
-  constructor(private supplierService: SupplierService) { }
+  constructor(
+    private supplierService: SupplierService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     this.loadSuppliers();
@@ -166,22 +170,40 @@ export class SupplierListComponent implements OnInit {
 
   deleteSupplier(supplier: Supplier): void {
     if (confirm(`Are you sure you want to delete ${supplier.name}?`)) {
-      this.supplierService.deleteSupplier(supplier.id!).subscribe(() => {
-        this.loadSuppliers();
+      this.supplierService.deleteSupplier(supplier.id!).subscribe({
+        next: () => {
+          this.notificationService.showSuccess(`Supplier ${supplier.name} deleted successfully`);
+          this.loadSuppliers();
+        },
+        error: (error) => {
+          this.notificationService.showError('Failed to delete supplier. This supplier might be linked to products.');
+        }
       });
     }
   }
 
   saveSupplier(): void {
     if (this.showEditModal) {
-      this.supplierService.updateSupplier(this.currentSupplier.id!, this.currentSupplier).subscribe(() => {
-        this.loadSuppliers();
-        this.closeModal();
+      this.supplierService.updateSupplier(this.currentSupplier.id!, this.currentSupplier).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Supplier updated successfully');
+          this.loadSuppliers();
+          this.closeModal();
+        },
+        error: (error) => {
+          this.notificationService.showError('Failed to update supplier');
+        }
       });
     } else {
-      this.supplierService.createSupplier(this.currentSupplier).subscribe(() => {
-        this.loadSuppliers();
-        this.closeModal();
+      this.supplierService.createSupplier(this.currentSupplier).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Supplier created successfully');
+          this.loadSuppliers();
+          this.closeModal();
+        },
+        error: (error) => {
+          this.notificationService.showError('Failed to create supplier');
+        }
       });
     }
   }

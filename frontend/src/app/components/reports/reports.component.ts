@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { AnalyticsService, SalesFrequency, ProductSalesTrend, TopProduct, RevenueAnalytics } from '../../services/analytics.service';
@@ -139,16 +140,23 @@ import { AnalyticsService, SalesFrequency, ProductSalesTrend, TopProduct, Revenu
                 <td>{{ formatDate(trend.suggestedOrderDate) }}</td>
                 <td>{{ trend.suggestedOrderQuantity || '-' }}</td>
                 <td>
-                  <span class="status-badge" 
-                        [class.urgent]="trend.daysUntilStockout <= 3"
-                        [class.warning]="trend.daysUntilStockout > 3 && trend.daysUntilStockout <= 7"
-                        [class.good]="trend.daysUntilStockout > 7">
-                    <i class="fas" 
-                       [class.fa-exclamation-circle]="trend.daysUntilStockout <= 3"
-                       [class.fa-exclamation-triangle]="trend.daysUntilStockout > 3 && trend.daysUntilStockout <= 7"
-                       [class.fa-check-circle]="trend.daysUntilStockout > 7"></i>
-                    {{ getStockStatus(trend.daysUntilStockout) }}
-                  </span>
+                  <div class="status-cell">
+                    <span class="status-badge" 
+                          [class.urgent]="trend.daysUntilStockout <= 3"
+                          [class.warning]="trend.daysUntilStockout > 3 && trend.daysUntilStockout <= 7"
+                          [class.good]="trend.daysUntilStockout > 7">
+                      <i class="fas" 
+                         [class.fa-exclamation-circle]="trend.daysUntilStockout <= 3"
+                         [class.fa-exclamation-triangle]="trend.daysUntilStockout > 3 && trend.daysUntilStockout <= 7"
+                         [class.fa-check-circle]="trend.daysUntilStockout > 7"></i>
+                      {{ getStockStatus(trend.daysUntilStockout) }}
+                    </span>
+                    <button class="btn btn-sm btn-primary order-btn" 
+                            *ngIf="trend.daysUntilStockout <= 7"
+                            (click)="orderNow(trend.productId)">
+                      <i class="fas fa-shopping-cart"></i> Order Now
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -507,6 +515,23 @@ import { AnalyticsService, SalesFrequency, ProductSalesTrend, TopProduct, Revenu
       color: #28a745;
     }
 
+    .status-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .order-btn {
+      font-size: 12px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    .order-btn i {
+      margin-right: 4px;
+    }
+
     /* Pagination Styles */
     .pagination-container {
       display: flex;
@@ -699,7 +724,10 @@ export class ReportsComponent implements OnInit {
     },
   };
 
-  constructor(private analyticsService: AnalyticsService) {}
+  constructor(
+    private analyticsService: AnalyticsService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadAllData();
@@ -955,5 +983,10 @@ export class ReportsComponent implements OnInit {
     }
     
     return pages;
+  }
+
+  orderNow(productId: string) {
+    // Navigate to the order-now page with the product ID
+    this.router.navigate(['/order-now', productId]);
   }
 }

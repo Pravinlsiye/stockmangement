@@ -9,6 +9,9 @@ import { BillComponent } from './components/bill/bill.component';
 import { SalesComponent } from './components/sales/sales.component';
 import { SalesBillComponent } from './components/sales-bill/sales-bill.component';
 import { ReportsComponent } from './components/reports/reports.component';
+import { OrderNowComponent } from './components/order-now/order-now.component';
+import { CreateOrderComponent } from './components/create-order/create-order.component';
+import { OrdersListComponent } from './components/orders-list/orders-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -20,7 +23,10 @@ const routes: Routes = [
   { path: 'bill/:id', component: BillComponent },
   { path: 'sales', component: SalesComponent },
   { path: 'sales-bill', component: SalesBillComponent },
-  { path: 'reports', component: ReportsComponent }
+  { path: 'reports', component: ReportsComponent },
+  { path: 'order-now/:id', component: OrderNowComponent },
+  { path: 'create-order', component: CreateOrderComponent },
+  { path: 'orders', component: OrdersListComponent }
 ];
 
 @NgModule({

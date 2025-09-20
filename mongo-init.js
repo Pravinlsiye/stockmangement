@@ -16,6 +16,9 @@ db.createUser({
 db.createCollection('categories');
 db.createCollection('suppliers');
 db.createCollection('products');
+db.createCollection('product_suppliers');
+db.createCollection('purchase_orders');
 db.createCollection('transactions');
 
 print('Database initialized successfully!');
+print('Collections created: categories, suppliers, products, product_suppliers, purchase_orders, transactions');

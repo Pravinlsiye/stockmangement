@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 import { SupplierService } from '../../services/supplier.service';
@@ -53,8 +54,8 @@ import { Product } from '../../models/product.model';
               <td>{{ product.minStockLevel }}</td>
               <td>{{ product.unit }}</td>
               <td>
-                <button class="btn btn-primary btn-sm" (click)="orderProduct(product)">
-                  Order Now
+                <button class="btn btn-warning btn-sm" (click)="orderProduct(product)">
+                  <i class="fas fa-shopping-cart"></i> Order Now
                 </button>
               </td>
             </tr>
@@ -99,7 +100,8 @@ export class DashboardComponent implements OnInit {
     private productService: ProductService,
     private categoryService: CategoryService,
     private supplierService: SupplierService,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -125,7 +127,7 @@ export class DashboardComponent implements OnInit {
   }
 
   orderProduct(product: Product): void {
-    // In a real app, this would open a modal or navigate to order page
-    alert(`Order product: ${product.name}`);
+    // Navigate to the order page for this product
+    this.router.navigate(['/order-now', product.id]);
   }
 }

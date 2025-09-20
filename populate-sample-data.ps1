@@ -201,6 +201,91 @@ for ($i = 0; $i -lt 30; $i++) {
     }
 }
 
+# Create Product-Supplier relationships
+Write-Host ""
+Write-Host "Creating product-supplier relationships..." -ForegroundColor Yellow
+$productSupplierCount = 0
+
+# Define product-supplier relationships with realistic delivery times and costs
+$productSupplierRelationships = @(
+    # Beverages - Multiple suppliers
+    @{productName = "Thums Up 2L"; suppliers = @(
+        @{supplierName = "Tamil Nadu Beverages"; costPerUnit = 55; deliveryDays = 1; minOrderQty = 24; isPreferred = $true},
+        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 58; deliveryDays = 2; minOrderQty = 12; isPreferred = $false}
+    )},
+    @{productName = "Frooti Mango 1L"; suppliers = @(
+        @{supplierName = "Tamil Nadu Beverages"; costPerUnit = 30; deliveryDays = 1; minOrderQty = 24; isPreferred = $true},
+        @{supplierName = "Kongu Provision Stores"; costPerUnit = 32; deliveryDays = 3; minOrderQty = 20; isPreferred = $false}
+    )},
+    
+    # Dairy Products
+    @{productName = "Aavin Milk 500ml"; suppliers = @(
+        @{supplierName = "Aavin Dairy Distributor"; costPerUnit = 20; deliveryDays = 1; minOrderQty = 50; isPreferred = $true}
+    )},
+    @{productName = "Aavin Curd 500g"; suppliers = @(
+        @{supplierName = "Aavin Dairy Distributor"; costPerUnit = 18; deliveryDays = 1; minOrderQty = 30; isPreferred = $true}
+    )},
+    
+    # Rice and Grains
+    @{productName = "Ponni Rice 5kg"; suppliers = @(
+        @{supplierName = "Sri Saravana Stores"; costPerUnit = 180; deliveryDays = 2; minOrderQty = 20; isPreferred = $true},
+        @{supplierName = "Amaravathi Traders"; costPerUnit = 185; deliveryDays = 1; minOrderQty = 10; isPreferred = $false}
+    )},
+    @{productName = "Idly Rice 5kg"; suppliers = @(
+        @{supplierName = "Sri Saravana Stores"; costPerUnit = 160; deliveryDays = 2; minOrderQty = 20; isPreferred = $true},
+        @{supplierName = "Kongu Provision Stores"; costPerUnit = 165; deliveryDays = 3; minOrderQty = 15; isPreferred = $false}
+    )},
+    
+    # Vegetables
+    @{productName = "Tomato (Local)"; suppliers = @(
+        @{supplierName = "Karur Fresh Vegetables"; costPerUnit = 18; deliveryDays = 1; minOrderQty = 10; isPreferred = $true}
+    )},
+    @{productName = "Onion (Small)"; suppliers = @(
+        @{supplierName = "Karur Fresh Vegetables"; costPerUnit = 30; deliveryDays = 1; minOrderQty = 10; isPreferred = $true}
+    )},
+    
+    # Spices
+    @{productName = "MTR Sambar Powder 100g"; suppliers = @(
+        @{supplierName = "Kongu Provision Stores"; costPerUnit = 30; deliveryDays = 2; minOrderQty = 50; isPreferred = $true},
+        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 32; deliveryDays = 1; minOrderQty = 40; isPreferred = $false}
+    )},
+    
+    # Personal Care
+    @{productName = "Hamam Soap 100g"; suppliers = @(
+        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 28; deliveryDays = 2; minOrderQty = 72; isPreferred = $true},
+        @{supplierName = "Sri Saravana Stores"; costPerUnit = 30; deliveryDays = 3; minOrderQty = 60; isPreferred = $false}
+    )}
+)
+
+# Create relationships
+foreach ($relation in $productSupplierRelationships) {
+    $product = $createdProducts | Where-Object { $_.name -eq $relation.productName }
+    if ($product) {
+        foreach ($supplierRel in $relation.suppliers) {
+            $supplier = $createdSuppliers | Where-Object { $_.name -eq $supplierRel.supplierName }
+            if ($supplier) {
+                $productSupplier = @{
+                    productId = $product.id
+                    supplierId = $supplier.id
+                    costPerUnit = $supplierRel.costPerUnit
+                    deliveryDays = $supplierRel.deliveryDays
+                    minimumOrderQuantity = $supplierRel.minOrderQty
+                    isPreferred = $supplierRel.isPreferred
+                    notes = "Regular supplier for $($product.name)"
+                }
+                
+                try {
+                    $response = Invoke-RestMethod -Uri "$baseUrl/product-suppliers" -Method Post -Body ($productSupplier | ConvertTo-Json) -ContentType "application/json"
+                    $productSupplierCount++
+                    Write-Host "  Linked: $($product.name) <- $($supplier.name) (₹$($supplierRel.costPerUnit)/unit, $($supplierRel.deliveryDays) days)" -ForegroundColor Green
+                } catch {
+                    Write-Host "  Failed to link: $($product.name) with $($supplier.name)" -ForegroundColor Red
+                }
+            }
+        }
+    }
+}
+
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Sample Data Population Complete!" -ForegroundColor Green
@@ -211,6 +296,7 @@ Write-Host "  - $($createdCategories.Count) Categories" -ForegroundColor White
 Write-Host "  - $($createdSuppliers.Count) Suppliers (Tamil Nadu, Karur based)" -ForegroundColor White
 Write-Host "  - $($createdProducts.Count) Products (Indian brands & local items)" -ForegroundColor White
 Write-Host "  - $transactionCount Transactions" -ForegroundColor White
+Write-Host "  - $productSupplierCount Product-Supplier relationships" -ForegroundColor White
 Write-Host ""
 Write-Host "Note: Some products have low stock levels to demonstrate alerts!" -ForegroundColor Yellow
 Write-Host ""

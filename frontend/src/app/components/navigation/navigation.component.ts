@@ -54,6 +54,13 @@ import { Component, OnInit } from '@angular/core';
             </li>
             
             <li class="nav-item">
+              <a routerLink="/orders" routerLinkActive="active">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            
+            <li class="nav-item">
               <a routerLink="/reports" routerLinkActive="active">
                 <i class="fas fa-chart-line"></i>
                 <span>Reports</span>

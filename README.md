@@ -1,6 +1,6 @@
 # 🛒 StockPro - Inventory Manager
 
-A comprehensive inventory management system designed for supermarkets to track products, manage suppliers, monitor stock levels, and record transactions. Built with modern technologies and containerized MongoDB for easy deployment.
+A comprehensive inventory management system designed for supermarkets to track products, manage suppliers, monitor stock levels, handle sales transactions, and generate business analytics. Built with modern technologies and containerized MongoDB for easy deployment.
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)
@@ -29,30 +29,58 @@ A comprehensive inventory management system designed for supermarkets to track p
 
 # Stop everything
 .\RUN.ps1 -Action stop
+
+# Clear database
+.\clear-database.ps1
 ```
 
 ### MongoDB Setup
 The database is automatically initialized with:
 - Database: `supermarket_stock`
 - User: `stockapp` with password `stockpass123`
-- Collections: categories, suppliers, products, transactions
+- Collections: categories, suppliers, products, transactions, product_suppliers, purchase_orders
 - Initialization script: `mongo-init.js` (runs automatically on first container start)
 
 ## 📋 Features
 
 ### Core Functionality
 - **Product Management**: Track inventory with barcode, pricing, and stock levels
+- **Multi-Supplier Support**: Products can have multiple suppliers with different pricing
 - **Category Organization**: Group products by categories (Beverages, Dairy, etc.)
-- **Supplier Management**: Maintain supplier information and relationships
+- **Supplier Management**: Full CRUD operations for supplier information
 - **Transaction Recording**: Log all purchases, sales, and stock adjustments
 - **Low Stock Alerts**: Real-time dashboard alerts for products below minimum levels
 - **Multi-Unit Support**: Handle different units (kg, pieces, liters, etc.)
 
-### Business Features
-- Automatic stock updates on transactions
-- Purchase and selling price tracking with profit margins
-- Transaction history with reference numbers
-- Indian Rupee (₹) currency support
+### Sales & POS Features
+- **Sales Terminal**: Modern POS-style interface for quick sales
+- **Autocomplete Search**: Find products by name or barcode
+- **Shopping Cart**: Add multiple items with quantity management
+- **Bill Generation**: Professional receipts with print functionality
+- **One-Click Checkout**: Streamlined sales workflow
+
+### Order Management
+- **Purchase Orders**: Create and track orders from suppliers
+- **Order Workflow**: From creation to delivery with status tracking
+- **Payment Tracking**: Monitor payment status and methods
+- **Automatic Stock Updates**: Stock increases when orders are delivered
+- **Expected Delivery Dates**: Track when orders will arrive
+
+### Business Analytics
+- **Sales Frequency Charts**: View sales trends over time
+- **Product Performance**: Identify top-selling products
+- **Category Analysis**: Sales distribution by category
+- **Revenue Analytics**: Track daily, weekly, and monthly revenue
+- **Purchase Predictions**: AI-suggested reorder points
+- **Interactive Charts**: Powered by Chart.js
+
+### UI/UX Enhancements
+- **Toast Notifications**: No more alert boxes - beautiful notifications
+- **Modal Dialogs**: Clean, professional popups for data entry
+- **Responsive Design**: Works on desktop and mobile
+- **Font Awesome Icons**: Consistent iconography throughout
+- **Print-Friendly**: Optimized bill printing for receipt printers
+- **Pagination**: Efficient data browsing for large datasets
 
 ## 🏗️ System Architecture
 
@@ -64,9 +92,9 @@ The database is automatically initialized with:
 │  │  Dashboard  │  │   Products   │  │ Categories  │  │Suppliers │ │
 │  └─────────────┘  └──────────────┘  └─────────────┘  └──────────┘ │
 │                                                                      │
-│  ┌──────────────────────────┐  ┌─────────────────────────────────┐ │
-│  │    Transaction List      │  │      Navigation Component       │ │
-│  └──────────────────────────┘  └─────────────────────────────────┘ │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌──────────┐ │
+│  │Sales Terminal│  │   Reports    │  │   Orders    │  │   Bills  │ │
+│  └─────────────┘  └──────────────┘  └─────────────┘  └──────────┘ │
 └────────────────────────────────┬────────────────────────────────────┘
                                  │ HTTP/REST
                                  │
@@ -98,13 +126,16 @@ The database is automatically initialized with:
 - **Database**: MongoDB (via Spring Data MongoDB)
 - **Build Tool**: Maven (with Maven Wrapper)
 - **API**: RESTful Web Services
+- **CORS**: Configured for Angular frontend
 
 ### Frontend
 - **Framework**: Angular 16.2.0
-- **UI Components**: Modus Web Components
+- **UI Components**: Custom components with Font Awesome icons
+- **Charts**: Chart.js with ng2-charts
 - **Language**: TypeScript
-- **Styling**: CSS with custom components
+- **Styling**: CSS with responsive design
 - **HTTP Client**: Angular HttpClient
+- **Forms**: Template-driven forms
 
 ### Infrastructure
 - **Database**: MongoDB (Dockerized)
@@ -127,6 +158,7 @@ stockmanagement/
 │   │       │       ├── model/          # Data Models
 │   │       │       ├── repository/     # MongoDB Repositories
 │   │       │       ├── service/        # Business Logic
+│   │       │       ├── dto/            # Data Transfer Objects
 │   │       │       └── config/         # Configuration
 │   │       └── resources/
 │   │           └── application.properties
@@ -137,6 +169,12 @@ stockmanagement/
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── components/    # UI Components
+│   │   │   │   ├── dashboard/
+│   │   │   │   ├── product-list/
+│   │   │   │   ├── sales/
+│   │   │   │   ├── reports/
+│   │   │   │   ├── orders-list/
+│   │   │   │   └── notification/
 │   │   │   ├── models/        # TypeScript Models
 │   │   │   ├── services/      # API Services
 │   │   │   └── app.module.ts  # App Module
@@ -148,6 +186,7 @@ stockmanagement/
 ├── docker-compose.yml         # MongoDB Container Config
 ├── mongo-init.js             # Database Initialization
 ├── populate-sample-data.ps1  # Sample Data Script
+├── clear-database.ps1        # Database Cleanup Script
 └── RUN.ps1                   # Master Run Script
 ```
 
@@ -161,14 +200,51 @@ stockmanagement/
   description: String,
   barcode: String,
   categoryId: String,
-  supplierId: String,
-  purchasePrice: Double,    // in INR
-  sellingPrice: Double,     // in INR
+  supplierId: String,        // Legacy field
+  purchasePrice: Double,     // in INR
+  sellingPrice: Double,      // in INR
   currentStock: Integer,
   minStockLevel: Integer,
   unit: String,
   createdAt: LocalDateTime,
   updatedAt: LocalDateTime
+}
+```
+
+### ProductSupplier (New)
+```java
+{
+  id: String,
+  productId: String,
+  supplierId: String,
+  costPerUnit: Double,
+  deliveryDays: Integer,
+  minimumOrderQuantity: Integer,
+  isPreferred: Boolean,
+  notes: String
+}
+```
+
+### PurchaseOrder (New)
+```java
+{
+  id: String,
+  orderNumber: String,
+  productId: String,
+  productName: String,
+  supplierId: String,
+  supplierName: String,
+  quantity: Integer,
+  unitPrice: Double,
+  totalAmount: Double,
+  orderDate: Date,
+  expectedDeliveryDate: Date,
+  actualDeliveryDate: Date,
+  status: OrderStatus,       // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+  paymentStatus: String,     // PENDING, PARTIAL, PAID
+  paymentMethod: String,
+  paymentDate: Date,
+  notes: String
 }
 ```
 
@@ -197,6 +273,21 @@ stockmanagement/
 - `PUT /api/products/{id}` - Update product
 - `DELETE /api/products/{id}` - Delete product
 
+### Product-Suppliers (New)
+- `GET /api/product-suppliers` - List all relationships
+- `GET /api/product-suppliers/by-product/{productId}` - Get suppliers for a product
+- `GET /api/product-suppliers/by-product/{productId}/details` - Get detailed supplier info
+- `POST /api/product-suppliers` - Create relationship
+- `DELETE /api/product-suppliers/{id}` - Remove relationship
+
+### Purchase Orders (New)
+- `GET /api/purchase-orders` - List all orders
+- `GET /api/purchase-orders/{id}` - Get order details
+- `POST /api/purchase-orders` - Create order
+- `PUT /api/purchase-orders/{id}` - Update order
+- `PUT /api/purchase-orders/{id}/payment` - Update payment status
+- `DELETE /api/purchase-orders/{id}` - Delete order
+
 ### Categories
 - `GET /api/categories` - List all categories
 - `POST /api/categories` - Create category
@@ -211,8 +302,15 @@ stockmanagement/
 
 ### Transactions
 - `GET /api/transactions` - List all transactions
+- `GET /api/transactions/{id}` - Get transaction details
 - `GET /api/transactions/type/{type}` - Filter by type
 - `POST /api/transactions` - Create transaction (updates stock)
+
+### Analytics (New)
+- `GET /api/analytics/sales-frequency?days={days}` - Sales frequency data
+- `GET /api/analytics/product-trends` - Product sales trends
+- `GET /api/analytics/top-products?limit={limit}` - Top selling products
+- `GET /api/analytics/revenue?period={period}` - Revenue analytics
 
 ## 💾 MongoDB Configuration
 
@@ -229,19 +327,50 @@ The application uses Docker Compose to run MongoDB:
 services:
   mongodb:
     image: mongo:latest
+    container_name: supermarket-mongodb
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: supermarket_stock
     volumes:
       - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 ```
 
 ## 🎯 Sample Data
 
-The system includes a script to populate realistic supermarket data:
+The system includes a script to populate realistic Tamil Nadu-based supermarket data:
 - 10 Categories (Beverages, Dairy, Bakery, etc.)
-- 5 Suppliers with contact information
-- 26 Products with Indian Rupee pricing
-- 30 Transactions showing purchase and sale history
+- 10 Local Suppliers from Karur region
+- 50+ Products with Indian Rupee pricing
+- Product-Supplier relationships with pricing
+- 30+ Transactions showing purchase and sale history
+- Realistic Indian product names and brands
+
+## 🚦 Usage Guide
+
+### Creating a Sale
+1. Navigate to Sales Terminal
+2. Search for products by name or barcode
+3. Click to add to cart
+4. Adjust quantities as needed
+5. Complete sale and print bill
+
+### Managing Orders
+1. Low stock items show "Order Now" button
+2. Select supplier and compare prices
+3. Create purchase order
+4. Track order status and payment
+5. Stock automatically updates on delivery
+
+### Viewing Reports
+1. Go to Reports page
+2. View sales frequency charts
+3. Analyze top products and categories
+4. Check revenue trends
+5. Export data as needed
 
 ## 🤝 Contributing
 
