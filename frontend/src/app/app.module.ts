@@ -12,6 +12,8 @@ import { SupplierListComponent } from './components/supplier-list/supplier-list.
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { BillComponent } from './components/bill/bill.component';
+import { SalesComponent } from './components/sales/sales.component';
+import { SalesBillComponent } from './components/sales-bill/sales-bill.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { BillComponent } from './components/bill/bill.component';
     SupplierListComponent,
     TransactionListComponent,
     NavigationComponent,
-    BillComponent
+    BillComponent,
+    SalesComponent,
+    SalesBillComponent
   ],
   imports: [
     BrowserModule,

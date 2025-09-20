@@ -6,6 +6,8 @@ import { CategoryListComponent } from './components/category-list/category-list.
 import { SupplierListComponent } from './components/supplier-list/supplier-list.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { BillComponent } from './components/bill/bill.component';
+import { SalesComponent } from './components/sales/sales.component';
+import { SalesBillComponent } from './components/sales-bill/sales-bill.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -14,7 +16,9 @@ const routes: Routes = [
   { path: 'categories', component: CategoryListComponent },
   { path: 'suppliers', component: SupplierListComponent },
   { path: 'transactions', component: TransactionListComponent },
-  { path: 'bill/:id', component: BillComponent }
+  { path: 'bill/:id', component: BillComponent },
+  { path: 'sales', component: SalesComponent },
+  { path: 'sales-bill', component: SalesBillComponent }
 ];
 
 @NgModule({
