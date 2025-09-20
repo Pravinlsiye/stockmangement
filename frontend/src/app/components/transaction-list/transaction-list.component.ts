@@ -213,7 +213,12 @@ export class TransactionListComponent implements OnInit {
 
   loadTransactions(): void {
     this.transactionService.getAllTransactions().subscribe(transactions => {
-      this.transactions = transactions;
+      // Sort transactions by date in descending order (latest first)
+      this.transactions = transactions.sort((a, b) => {
+        const dateA = new Date(a.transactionDate || 0).getTime();
+        const dateB = new Date(b.transactionDate || 0).getTime();
+        return dateB - dateA; // Descending order (latest first)
+      });
       this.filterByType(this.selectedType);
     });
   }
@@ -227,7 +232,7 @@ export class TransactionListComponent implements OnInit {
   filterByType(type: string): void {
     this.selectedType = type;
     if (type === 'ALL') {
-      this.filteredTransactions = this.transactions;
+      this.filteredTransactions = [...this.transactions]; // Already sorted
     } else {
       this.filteredTransactions = this.transactions.filter(t => t.type === type);
     }
