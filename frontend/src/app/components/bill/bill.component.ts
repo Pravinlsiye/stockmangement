@@ -200,22 +200,43 @@ import { Product } from '../../models/product.model';
     }
 
     @media print {
-      .no-print {
+      /* Hide navigation and buttons */
+      .no-print,
+      app-navigation,
+      button,
+      .btn {
         display: none !important;
       }
 
+      /* Remove container padding and shadows */
       .bill-container {
-        padding: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+        min-height: auto !important;
       }
 
       .bill {
-        box-shadow: none;
-        padding: 10px;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 10px !important;
+        margin: 0 !important;
       }
 
+      /* Print settings for receipt printer */
       @page {
-        size: 80mm 200mm;
+        size: 80mm auto;
         margin: 0;
+      }
+      
+      /* Ensure clean printing */
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* Prevent text cutoff */
+      * {
+        overflow: visible !important;
       }
     }
   `]

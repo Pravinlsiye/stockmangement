@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
+import { NgChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -14,6 +15,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { BillComponent } from './components/bill/bill.component';
 import { SalesComponent } from './components/sales/sales.component';
 import { SalesBillComponent } from './components/sales-bill/sales-bill.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 @NgModule({
   declarations: [
@@ -26,14 +28,16 @@ import { SalesBillComponent } from './components/sales-bill/sales-bill.component
     NavigationComponent,
     BillComponent,
     SalesComponent,
-    SalesBillComponent
+    SalesBillComponent,
+    ReportsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

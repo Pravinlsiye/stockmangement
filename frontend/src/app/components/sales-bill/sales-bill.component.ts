@@ -242,23 +242,59 @@ interface BillData {
     }
 
     @media print {
-      .no-print {
+      /* Hide navigation and buttons */
+      .no-print,
+      app-navigation,
+      button,
+      .btn {
         display: none !important;
       }
 
+      /* Remove container padding and shadows */
       .bill-container {
-        padding: 0;
-        max-width: 100%;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        min-height: auto !important;
       }
 
       .bill {
-        box-shadow: none;
-        padding: 10px;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        max-width: 100% !important;
       }
 
+      /* Print settings for receipt printer */
       @page {
-        size: 80mm 200mm;
+        size: 80mm auto;
         margin: 0;
+      }
+      
+      /* Ensure clean printing */
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+      }
+      
+      /* Prevent text cutoff */
+      * {
+        overflow: visible !important;
+      }
+      
+      /* Ensure bill items table prints properly */
+      .bill-items {
+        width: 100% !important;
+      }
+      
+      /* Hide page elements that shouldn't print */
+      .navbar,
+      .nav-container,
+      .page-header,
+      .action-buttons {
+        display: none !important;
       }
     }
   `]

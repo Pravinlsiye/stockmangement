@@ -8,6 +8,7 @@ import { TransactionListComponent } from './components/transaction-list/transact
 import { BillComponent } from './components/bill/bill.component';
 import { SalesComponent } from './components/sales/sales.component';
 import { SalesBillComponent } from './components/sales-bill/sales-bill.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -18,7 +19,8 @@ const routes: Routes = [
   { path: 'transactions', component: TransactionListComponent },
   { path: 'bill/:id', component: BillComponent },
   { path: 'sales', component: SalesComponent },
-  { path: 'sales-bill', component: SalesBillComponent }
+  { path: 'sales-bill', component: SalesBillComponent },
+  { path: 'reports', component: ReportsComponent }
 ];
 
 @NgModule({
