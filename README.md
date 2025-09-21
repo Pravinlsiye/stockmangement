@@ -30,10 +30,6 @@ A comprehensive inventory management system designed for supermarkets to track p
 - ✅ **Professional Billing** - Generate and print receipts
 
 
-## 📸 Screenshots
-
-
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -215,12 +211,61 @@ The database is automatically initialized with:
 - **Forms**: Template-driven forms
 
 ### Infrastructure
-- **Database**: MongoDB (Dockerized)
-- **Container**: Docker & Docker Compose
+
+#### Database Options
+- **Local MongoDB**: 
+  - Dockerized MongoDB container
+  - Automatic initialization with `mongo-init.js`
+  - Pre-configured user credentials
+  - Volume-mounted for data persistence
+- **Cloud MongoDB**: 
+  - MongoDB Atlas support
+  - Secure connection string storage
+  - No Docker dependency for cloud mode
+  - Connection string caching in `.env.local`
+
+#### Containerization
+- **Docker**: MongoDB containerization for local development
+- **Docker Compose**: Service orchestration
+- **Container Management**: 
+  - Automatic container lifecycle (start/stop)
+  - Health checks and restart policies
+  - Volume management for data persistence
+
+#### Automation & Scripts
+- **RUN.ps1**: Master orchestration script
+  - Intelligent mode switching (local/cloud)
+  - Service health monitoring
+  - Automated dependency checks
+  - Graceful error handling
+- **populate-sample-data.ps1**: Test data generation
+- **clear-database.ps1**: Database cleanup utility
+- **mongo-init.js**: Database initialization
+
+#### Network Configuration
 - **Ports**:
-  - Frontend: 4200
-  - Backend: 8080
-  - MongoDB: 27017
+  - Frontend: 4200 (Angular Dev Server)
+  - Backend: 8080 (Spring Boot)
+  - MongoDB: 27017 (Local mode only)
+- **CORS**: Pre-configured for frontend-backend communication
+- **API Gateway**: RESTful endpoints at `/api/*`
+
+#### Environment Management
+- **Local Configuration**: `.env.local` for sensitive data
+- **Spring Profiles**: Development and production configurations
+- **Angular Environments**: Separate dev/prod builds
+- **Git-ignored Secrets**: Credentials never committed
+
+#### System Requirements
+- **Operating System**: Windows 10/11 (PowerShell scripts)
+- **Runtime Dependencies**:
+  - Java 17+ JDK
+  - Node.js 16+
+  - Docker Desktop (local mode only)
+- **Development Tools**:
+  - Maven (included via wrapper)
+  - npm (via Node.js)
+  - PowerShell 5.1+
 
 ## 📁 Project Structure
 
