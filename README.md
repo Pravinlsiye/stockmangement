@@ -68,15 +68,18 @@ A comprehensive inventory management system designed for supermarkets to track p
 
 ### Prerequisites
 - Windows 10/11 with PowerShell
-- Docker Desktop
+- Docker Desktop (only for local mode)
 - Java 17+ (JDK)
 - Node.js 16+
 
 ### One-Command Setup & Run
 
 ```powershell
-# Start everything (MongoDB, Backend, Frontend)
+# Start with local MongoDB (Docker)
 .\RUN.ps1 -Action start
+
+# Start with cloud MongoDB (MongoDB Atlas)
+.\RUN.ps1 -Action start -DbMode cloud
 
 # Populate with sample data (after services are running)
 .\RUN.ps1 -Action populate
@@ -91,12 +94,42 @@ A comprehensive inventory management system designed for supermarkets to track p
 .\clear-database.ps1
 ```
 
+### Script Options
+
+The `RUN.ps1` script supports different database modes:
+
+#### Local Mode (Default)
+Uses Docker MongoDB container locally:
+```powershell
+.\RUN.ps1 start  # or explicitly: .\RUN.ps1 start -DbMode local
+```
+
+#### Cloud Mode
+Uses MongoDB Atlas cloud database:
+```powershell
+.\RUN.ps1 start -DbMode cloud
+```
+- You'll be prompted for your MongoDB connection string
+- Format: `mongodb+srv://username:password@cluster.mongodb.net/database`
+- Option to save credentials locally in `.env.local` (git-ignored)
+- Saved credentials are used automatically on subsequent runs
+
 ### MongoDB Setup
+
+#### Local Mode (Default)
 The database is automatically initialized with:
 - Database: `supermarket_stock`
 - User: `stockapp` with password `stockpass123`
 - Collections: categories, suppliers, products, transactions, product_suppliers, purchase_orders
 - Initialization script: `mongo-init.js` (runs automatically on first container start)
+
+#### Cloud Mode
+- Uses MongoDB Atlas cloud database
+- No Docker required for database
+- When running with `-DbMode cloud`, you'll be prompted for your MongoDB connection string
+- Connection string format: `mongodb+srv://username:password@cluster.xxxxx.mongodb.net/database?retryWrites=true&w=majority`
+- The connection string can be saved locally (in `.env.local`) for convenience
+- Saved credentials are git-ignored and never committed to the repository
 
 ## 📋 Features
 

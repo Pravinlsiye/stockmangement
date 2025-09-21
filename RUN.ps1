@@ -2,12 +2,14 @@
 # This single script handles everything: Docker MongoDB, Backend, Frontend
 
 param(
-    [string]$Action = "start"  # start, stop, status, populate
+    [string]$Action = "start",  # start, stop, status, populate
+    [string]$DbMode = "local"   # local or cloud
 )
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Supermarket Stock Management System" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Database Mode: $DbMode" -ForegroundColor Yellow
 Write-Host ""
 
 # Set Java Home if possible
@@ -19,28 +21,32 @@ if (Test-Path $javaPath) {
 function Start-Application {
     Write-Host "Starting Application..." -ForegroundColor Yellow
     
-    # Check Docker
-    $dockerRunning = docker version 2>&1 | Select-String "Server:"
-    if (-not $dockerRunning) {
-        Write-Host "Docker Desktop is not running!" -ForegroundColor Red
-        Write-Host "Please start Docker Desktop first." -ForegroundColor Yellow
-        return
+    # Check Docker (if local mode)
+    if ($DbMode -eq "local") {
+        $dockerRunning = docker version 2>&1 | Select-String "Server:"
+        if (-not $dockerRunning) {
+            Write-Host "Docker Desktop is not running!" -ForegroundColor Red
+            Write-Host "Please start Docker Desktop first." -ForegroundColor Yellow
+            return
+        }
     }
     
-    # Start MongoDB in Docker
-    Write-Host "Starting MongoDB in Docker..." -ForegroundColor Yellow
-    $mongoContainer = docker ps -a --filter "name=supermarket-mongodb" --format "{{.Names}}"
-    
-    if ($mongoContainer) {
-        $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}"
-        if (-not $mongoRunning) {
-            docker start supermarket-mongodb
+    # Start MongoDB (if local mode)
+    if ($DbMode -eq "local") {
+        Write-Host "Starting MongoDB in Docker..." -ForegroundColor Yellow
+        $mongoContainer = docker ps -a --filter "name=supermarket-mongodb" --format "{{.Names}}"
+        
+        if ($mongoContainer) {
+            $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}"
+            if (-not $mongoRunning) {
+                docker start supermarket-mongodb
+            }
+            Write-Host "MongoDB is running" -ForegroundColor Green
+        } else {
+            docker-compose up -d mongodb
+            Start-Sleep -Seconds 5
+            Write-Host "MongoDB started" -ForegroundColor Green
         }
-        Write-Host "MongoDB is running" -ForegroundColor Green
-    } else {
-        docker-compose up -d mongodb
-        Start-Sleep -Seconds 5
-        Write-Host "MongoDB started" -ForegroundColor Green
     }
     
     # Build backend if needed
@@ -61,7 +67,42 @@ function Start-Application {
     
     # Start Backend
     Write-Host "Starting Backend Server..." -ForegroundColor Yellow
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location backend; `$env:JAVA_HOME='$javaPath'; .\mvnw.cmd spring-boot:run"
+    if ($DbMode -eq "cloud") {
+        Write-Host "Using Cloud MongoDB (MongoDB Atlas)" -ForegroundColor Cyan
+        
+        # Check for saved MongoDB URI or prompt for it
+        $mongoUri = ""
+        $envFile = ".env.local"
+        
+        if (Test-Path $envFile) {
+            $content = Get-Content $envFile | Where-Object { $_ -match "^MONGODB_URI=" }
+            if ($content) {
+                $mongoUri = $content -replace "^MONGODB_URI=", ""
+                Write-Host "Using saved MongoDB connection string" -ForegroundColor Green
+            }
+        }
+        
+        if (-not $mongoUri) {
+            Write-Host ""
+            Write-Host "Enter your MongoDB Atlas connection string:" -ForegroundColor Yellow
+            Write-Host "(Format: mongodb+srv://username:password@cluster.xxxxx.mongodb.net/database?retryWrites=true&w=majority)" -ForegroundColor Gray
+            $mongoUri = Read-Host "MongoDB URI"
+            
+            # Offer to save for future use
+            Write-Host ""
+            $save = Read-Host "Save this connection string for future use? (Y/N)"
+            if ($save -eq 'Y' -or $save -eq 'y') {
+                "MONGODB_URI=$mongoUri" | Out-File -FilePath $envFile -Encoding utf8
+                Write-Host "Connection string saved to $envFile" -ForegroundColor Green
+                Write-Host "(This file is git-ignored)" -ForegroundColor Gray
+            }
+        }
+        
+        Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location backend; `$env:JAVA_HOME='$javaPath'; `$env:SPRING_PROFILES_ACTIVE='cloud'; `$env:MONGODB_URI='$mongoUri'; .\mvnw.cmd spring-boot:run"
+    } else {
+        Write-Host "Using Local MongoDB (Docker)" -ForegroundColor Cyan
+        Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location backend; `$env:JAVA_HOME='$javaPath'; .\mvnw.cmd spring-boot:run"
+    }
     
     # Start Frontend
     Write-Host "Starting Frontend Server..." -ForegroundColor Yellow
@@ -74,7 +115,11 @@ function Start-Application {
     Write-Host ""
     Write-Host "Frontend: http://localhost:4200" -ForegroundColor Cyan
     Write-Host "Backend API: http://localhost:8080" -ForegroundColor Cyan
-    Write-Host "MongoDB: localhost:27017" -ForegroundColor Cyan
+    if ($DbMode -eq "cloud") {
+        Write-Host "MongoDB: Cloud (MongoDB Atlas)" -ForegroundColor Cyan
+    } else {
+        Write-Host "MongoDB: localhost:27017" -ForegroundColor Cyan
+    }
     Write-Host ""
     Write-Host "Opening browser in 15 seconds..." -ForegroundColor Yellow
     
@@ -157,6 +202,13 @@ switch ($Action.ToLower()) {
     "populate" { Populate-Data }
     default {
         Write-Host "Invalid action. Use: start, stop, status, or populate" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Usage:" -ForegroundColor Yellow
+        Write-Host "  .\RUN.ps1 -Action start            # Start with local MongoDB" -ForegroundColor Gray
+        Write-Host "  .\RUN.ps1 -Action start -DbMode cloud  # Start with cloud MongoDB" -ForegroundColor Gray
+        Write-Host "  .\RUN.ps1 -Action stop             # Stop all services" -ForegroundColor Gray
+        Write-Host "  .\RUN.ps1 -Action status           # Check service status" -ForegroundColor Gray
+        Write-Host "  .\RUN.ps1 -Action populate         # Populate sample data" -ForegroundColor Gray
     }
 }
 
