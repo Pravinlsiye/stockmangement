@@ -6,6 +6,7 @@ export interface Transaction {
   unitPrice: number;
   totalAmount: number;
   reference: string;
+  billId?: string;
   notes: string;
   transactionDate?: Date;
 }

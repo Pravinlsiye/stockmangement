@@ -20,6 +20,8 @@ import { OrderNowComponent } from './components/order-now/order-now.component';
 import { CreateOrderComponent } from './components/create-order/create-order.component';
 import { OrdersListComponent } from './components/orders-list/orders-list.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { BillsListComponent } from './components/bills-list/bills-list.component';
+import { BillDetailsComponent } from './components/bill-details/bill-details.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { NotificationComponent } from './components/notification/notification.co
     OrderNowComponent,
     CreateOrderComponent,
     OrdersListComponent,
-    NotificationComponent
+    NotificationComponent,
+    BillsListComponent,
+    BillDetailsComponent
   ],
   imports: [
     BrowserModule,

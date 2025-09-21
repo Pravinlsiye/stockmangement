@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { TransactionService } from '../../services/transaction.service';
 import { NotificationService } from '../../services/notification.service';
+import { BillService } from '../../services/bill.service';
 import { Product } from '../../models/product.model';
 import { Transaction, TransactionType } from '../../models/transaction.model';
 
@@ -1058,7 +1059,8 @@ export class SalesComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private transactionService: TransactionService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private billService: BillService
   ) {}
 
   ngOnInit(): void {
@@ -1294,17 +1296,19 @@ export class SalesComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.cart.splice(index, 1);
   }
 
-  clearCart(): void {
+  clearCart(showConfirmation: boolean = true): void {
     if (this.cart.length === 0) return;
     
-    if (confirm('Are you sure you want to clear all items from the cart?')) {
+    if (!showConfirmation || confirm('Are you sure you want to clear all items from the cart?')) {
       this.cart = [];
       this.searchQuery = '';
       this.showSuggestions = false;
       
       // Focus back on search input
       setTimeout(() => {
-        this.searchInput.nativeElement.focus();
+        if (this.searchInput && this.searchInput.nativeElement) {
+          this.searchInput.nativeElement.focus();
+        }
       }, 100);
     }
   }
@@ -1335,45 +1339,33 @@ export class SalesComponent implements OnInit, AfterViewInit, AfterViewChecked {
   generateBill(): void {
     if (this.cart.length === 0) return;
 
-    // Store cart data for bill generation
-    const billData = {
-      billNumber: this.billNumber,
-      date: new Date(),
-      items: this.cart.map(item => ({
-        productId: item.product.id,
-        productName: item.product.name,
-        quantity: item.quantity,
-        unitPrice: item.product.sellingPrice,
-        totalPrice: item.totalPrice
-      })),
-      subTotal: parseFloat(this.calculateSubTotal()),
-      cgst: parseFloat(this.calculateCGST()),
-      sgst: parseFloat(this.calculateSGST()),
-      grandTotal: parseFloat(this.calculateGrandTotal())
-    };
+    // Generate a new bill ID
+    this.billService.generateBillId().subscribe(billId => {
+      // Create transactions for each item with the same billId
+      const transactionPromises = this.cart.map(item => {
+        const transaction: Transaction = {
+          productId: item.product.id || '',
+          type: TransactionType.SALE,
+          quantity: item.quantity,
+          unitPrice: item.product.sellingPrice,
+          totalAmount: item.totalPrice,
+          reference: this.billNumber,
+          billId: billId,  // Add billId to group transactions
+          notes: `Sale - ${item.product.name}`
+        };
+        return this.transactionService.createTransaction(transaction).toPromise();
+      });
 
-    // Save to session storage
-    sessionStorage.setItem('currentBill', JSON.stringify(billData));
-
-    // Create transactions for each item
-    const transactionPromises = this.cart.map(item => {
-      const transaction: Transaction = {
-        productId: item.product.id || '',
-        type: TransactionType.SALE,
-        quantity: item.quantity,
-        unitPrice: item.product.sellingPrice,
-        totalAmount: item.totalPrice,
-        reference: this.billNumber,
-        notes: `Sale - ${item.product.name}`
-      };
-      return this.transactionService.createTransaction(transaction).toPromise();
-    });
-
-    // Wait for all transactions to complete
-    Promise.all(transactionPromises).then(() => {
-      // Navigate to bill page
-      this.router.navigate(['/sales-bill']);
-    }).catch(error => {
+      // Wait for all transactions to complete
+      Promise.all(transactionPromises).then(() => {
+        // Clear cart without confirmation and navigate to bill details
+        this.clearCart(false);
+        this.generateBillNumber(); // Generate new bill number for next sale
+        this.notificationService.showSuccess('Bill generated successfully!');
+        
+        // Navigate to bill details page
+        this.router.navigate(['/bills', billId]);
+      }).catch(error => {
       console.error('Error creating transactions:', error);
       
       // Check if it's an insufficient stock error
@@ -1385,6 +1377,7 @@ export class SalesComponent implements OnInit, AfterViewInit, AfterViewChecked {
       } else {
         this.notificationService.showError('Error processing sale. Please try again.');
       }
+      });
     });
   }
 

@@ -31,7 +31,10 @@ public class TransactionService {
     }
     
     public Transaction createTransaction(Transaction transaction) {
-        transaction.setTransactionDate(LocalDateTime.now());
+        // Only set current date if no date was provided
+        if (transaction.getTransactionDate() == null) {
+            transaction.setTransactionDate(LocalDateTime.now());
+        }
         transaction.setTotalAmount(Math.abs(transaction.getQuantity()) * transaction.getUnitPrice());
         
         // Update product stock based on transaction type

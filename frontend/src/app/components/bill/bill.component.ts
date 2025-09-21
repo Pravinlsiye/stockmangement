@@ -10,6 +10,14 @@ import { Product } from '../../models/product.model';
   template: `
     <div class="bill-container">
       <div class="bill-actions no-print">
+        <div class="theme-selector">
+          <label>Bill Theme:</label>
+          <select [(ngModel)]="selectedTheme" (change)="changeTheme()">
+            <option value="classic">Classic Receipt</option>
+            <option value="modern">Modern Invoice</option>
+            <option value="minimal">Minimal Style</option>
+          </select>
+        </div>
         <button class="btn btn-primary" (click)="print()">
           <i class="fas fa-print"></i> Print Bill
         </button>
@@ -18,7 +26,7 @@ import { Product } from '../../models/product.model';
         </button>
       </div>
 
-      <div class="bill" id="billContent">
+      <div class="bill" id="billContent" [ngClass]="'theme-' + selectedTheme">
         <div class="bill-header">
           <div class="store-logo">
             <i class="fas fa-warehouse"></i>
@@ -29,16 +37,12 @@ import { Product } from '../../models/product.model';
           <p>Phone: +91-98430-12345 | GST: 33ABCDE1234F1Z5</p>
         </div>
 
-        <div class="bill-divider">==================================</div>
-
         <div class="bill-info">
           <div class="info-row">
             <span>Bill No: {{ transaction?.reference }}</span>
             <span>Date: {{ formatDate(transaction?.transactionDate) }}</span>
           </div>
         </div>
-
-        <div class="bill-divider">==================================</div>
 
         <table class="bill-items">
           <thead>
@@ -59,8 +63,6 @@ import { Product } from '../../models/product.model';
           </tbody>
         </table>
 
-        <div class="bill-divider">----------------------------------</div>
-
         <div class="bill-total">
           <div class="total-row">
             <span>Sub Total:</span>
@@ -74,14 +76,11 @@ import { Product } from '../../models/product.model';
             <span>SGST (9%):</span>
             <span>₹{{ calculateTax(transaction?.totalAmount || 0, 9) }}</span>
           </div>
-          <div class="bill-divider">----------------------------------</div>
           <div class="total-row grand-total">
             <span>GRAND TOTAL:</span>
             <span>₹{{ calculateGrandTotal(transaction?.totalAmount || 0) }}</span>
           </div>
         </div>
-
-        <div class="bill-divider">==================================</div>
 
         <div class="bill-footer">
           <p>Thank You! Visit Again!</p>
@@ -100,7 +99,29 @@ import { Product } from '../../models/product.model';
     .bill-actions {
       margin-bottom: 20px;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .theme-selector {
+      display: flex;
+      align-items: center;
       gap: 10px;
+    }
+
+    .theme-selector label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .theme-selector select {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
     }
 
     .bill {
@@ -134,14 +155,9 @@ import { Product } from '../../models/product.model';
       font-size: 11px;
     }
 
-    .bill-divider {
-      text-align: center;
-      margin: 10px 0;
-      letter-spacing: -1px;
-    }
-
     .bill-info {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+      margin-top: 15px;
     }
 
     .info-row {
@@ -153,22 +169,23 @@ import { Product } from '../../models/product.model';
     .bill-items {
       width: 100%;
       margin-bottom: 10px;
+      margin-top: 10px;
     }
 
     .bill-items th {
       text-align: left;
-      border-bottom: 1px dashed #000;
-      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
       font-size: 11px;
     }
 
     .bill-items td {
-      padding: 5px 0;
+      padding: 6px 0;
       font-size: 11px;
     }
 
     .bill-total {
-      margin: 10px 0;
+      margin: 20px 0 10px 0;
     }
 
     .total-row {
@@ -181,12 +198,16 @@ import { Product } from '../../models/product.model';
     .grand-total {
       font-weight: bold;
       font-size: 14px;
-      margin-top: 5px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
     }
 
     .bill-footer {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
     }
 
     .bill-footer p {
@@ -197,6 +218,44 @@ import { Product } from '../../models/product.model';
     .bill-footer .small {
       font-size: 9px;
       font-style: italic;
+    }
+
+    /* Theme Styles */
+    .theme-modern .bill {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      border-radius: 8px;
+    }
+
+    .theme-modern .bill-header {
+      background: #2196F3;
+      color: white;
+      padding: 20px;
+      margin: -20px -20px 20px -20px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .theme-modern .store-logo {
+      font-size: 36px;
+      color: white;
+    }
+
+    .theme-modern h1 {
+      color: white;
+    }
+
+    .theme-minimal .bill {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      border: none;
+      box-shadow: none;
+    }
+
+    .theme-minimal .store-logo {
+      display: none;
+    }
+
+    .theme-minimal h1 {
+      font-size: 18px;
+      font-weight: 500;
     }
 
     @media print {
@@ -244,6 +303,7 @@ import { Product } from '../../models/product.model';
 export class BillComponent implements OnInit {
   transaction: Transaction | null = null;
   product: Product | null = null;
+  selectedTheme: string = 'classic';
 
   constructor(
     private route: ActivatedRoute,
@@ -252,6 +312,12 @@ export class BillComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('billTheme');
+    if (savedTheme) {
+      this.selectedTheme = savedTheme;
+    }
+    
     const transactionId = this.route.snapshot.paramMap.get('id');
     if (transactionId) {
       this.loadTransaction(transactionId);
@@ -295,5 +361,11 @@ export class BillComponent implements OnInit {
 
   goBack(): void {
     window.history.back();
+  }
+
+  changeTheme(): void {
+    // Theme will be applied automatically through [ngClass] binding
+    // Optionally, you can save the theme preference to localStorage
+    localStorage.setItem('billTheme', this.selectedTheme);
   }
 }

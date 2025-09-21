@@ -196,7 +196,7 @@ Write-Host "Creating transactions..." -ForegroundColor Yellow
 
 # Helper function to create random transactions
 function Create-Transaction {
-    param($product, $type, $date, $timeOfDay)
+    param($product, $type, $date, $timeOfDay, $billId)
     
     # Different quantity patterns based on product type and time
     $quantity = 1
@@ -218,6 +218,16 @@ function Create-Transaction {
     
     $unitPrice = if ($type -eq "PURCHASE") { $product.purchasePrice } else { $product.sellingPrice }
     
+    # Add realistic times based on time of day
+    $transactionTime = $date
+    switch ($timeOfDay) {
+        "Morning" { $transactionTime = $date.Date.AddHours((Get-Random -Minimum 6 -Maximum 12)).AddMinutes((Get-Random -Minimum 0 -Maximum 59)) }
+        "Afternoon" { $transactionTime = $date.Date.AddHours((Get-Random -Minimum 12 -Maximum 18)).AddMinutes((Get-Random -Minimum 0 -Maximum 59)) }
+        "Evening" { $transactionTime = $date.Date.AddHours((Get-Random -Minimum 18 -Maximum 22)).AddMinutes((Get-Random -Minimum 0 -Maximum 59)) }
+        "Restock" { $transactionTime = $date.Date.AddHours((Get-Random -Minimum 8 -Maximum 17)).AddMinutes((Get-Random -Minimum 0 -Maximum 59)) }
+        default { $transactionTime = $date }
+    }
+    
     $transaction = @{
         productId = $product.id
         type = $type
@@ -225,6 +235,12 @@ function Create-Transaction {
         unitPrice = $unitPrice
         reference = if ($type -eq "PURCHASE") { "PO-$(Get-Random -Minimum 1000 -Maximum 9999)" } else { "INV-$(Get-Random -Minimum 1000 -Maximum 9999)" }
         notes = if ($type -eq "PURCHASE") { "Stock replenishment - $($product.name)" } else { "Sale - $timeOfDay shift" }
+        transactionDate = $transactionTime.ToString("yyyy-MM-dd'T'HH:mm:ss")
+    }
+    
+    # Add billId for SALE transactions
+    if ($type -eq "SALE" -and $billId) {
+        $transaction.billId = $billId
     }
     
     return $transaction
@@ -249,68 +265,89 @@ for ($day = 6; $day -ge 0; $day--) {
     
     Write-Host "  Creating transactions for $dayName, $($transactionDate.ToString('yyyy-MM-dd'))..." -ForegroundColor Cyan
     
-    # Morning sales (6 AM - 12 PM) - Higher milk, bread, breakfast items
-    $morningSalesCount = Get-Random -Minimum 15 -Maximum 25
-    for ($i = 0; $i -lt $morningSalesCount; $i++) {
-        # Prioritize morning products
-        $morningProducts = $createdProducts | Where-Object { 
-            $_.name -like "*Milk*" -or $_.name -like "*Bread*" -or 
-            $_.name -like "*Bun*" -or $_.name -like "*Curd*" -or
-            $_.categoryId -eq $createdCategories[1].id -or  # Dairy
-            $_.categoryId -eq $createdCategories[2].id      # Bakery
-        }
-        $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 7 -and $morningProducts.Count -gt 0) { 
-            $morningProducts | Get-Random 
-        } else { 
-            $createdProducts | Get-Random 
-        }
+    # Morning sales (6 AM - 12 PM) - Create bills with multiple items
+    $morningBillsCount = Get-Random -Minimum 5 -Maximum 10
+    for ($billNum = 0; $billNum -lt $morningBillsCount; $billNum++) {
+        # Generate bill ID
+        $billId = "BILL-$(Get-Date $transactionDate -Format 'yyyyMMdd')-$(Get-Random -Minimum 10000 -Maximum 99999)"
         
-        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Morning"
-        
-        try {
-            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
-            $transactionCount++
-        } catch {
-            # Silent fail to avoid cluttering output
+        # Each bill has 2-6 items
+        $itemsPerBill = Get-Random -Minimum 2 -Maximum 6
+        for ($itemNum = 0; $itemNum -lt $itemsPerBill; $itemNum++) {
+            # Prioritize morning products
+            $morningProducts = $createdProducts | Where-Object { 
+                $_.name -like "*Milk*" -or $_.name -like "*Bread*" -or 
+                $_.name -like "*Bun*" -or $_.name -like "*Curd*" -or
+                $_.categoryId -eq $createdCategories[1].id -or  # Dairy
+                $_.categoryId -eq $createdCategories[2].id      # Bakery
+            }
+            $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 7 -and $morningProducts.Count -gt 0) { 
+                $morningProducts | Get-Random 
+            } else { 
+                $createdProducts | Get-Random 
+            }
+            
+            $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Morning" -billId $billId
+            
+            try {
+                $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+                $transactionCount++
+            } catch {
+                # Silent fail to avoid cluttering output
+            }
         }
     }
     
-    # Afternoon sales (12 PM - 6 PM) - Mixed products
-    $afternoonSalesCount = Get-Random -Minimum 20 -Maximum 30
-    for ($i = 0; $i -lt $afternoonSalesCount; $i++) {
-        $product = $createdProducts | Get-Random
-        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Afternoon"
+    # Afternoon sales (12 PM - 6 PM) - Create bills with mixed products
+    $afternoonBillsCount = Get-Random -Minimum 6 -Maximum 12
+    for ($billNum = 0; $billNum -lt $afternoonBillsCount; $billNum++) {
+        # Generate bill ID
+        $billId = "BILL-$(Get-Date $transactionDate -Format 'yyyyMMdd')-$(Get-Random -Minimum 10000 -Maximum 99999)"
         
-        try {
-            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
-            $transactionCount++
-        } catch {
-            # Silent fail
+        # Each bill has 3-8 items (more items in afternoon)
+        $itemsPerBill = Get-Random -Minimum 3 -Maximum 8
+        for ($itemNum = 0; $itemNum -lt $itemsPerBill; $itemNum++) {
+            $product = $createdProducts | Get-Random
+            $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Afternoon" -billId $billId
+            
+            try {
+                $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+                $transactionCount++
+            } catch {
+                # Silent fail
+            }
         }
     }
     
-    # Evening sales (6 PM - 10 PM) - Snacks, beverages, dinner items
-    $eveningSalesCount = Get-Random -Minimum 10 -Maximum 20
-    for ($i = 0; $i -lt $eveningSalesCount; $i++) {
-        # Prioritize evening products
-        $eveningProducts = $createdProducts | Where-Object { 
-            $_.categoryId -eq $createdCategories[0].id -or  # Beverages
-            $_.categoryId -eq $createdCategories[6].id -or  # Snacks
-            $_.name -like "*Rice*" -or $_.name -like "*Dal*"
-        }
-        $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 6 -and $eveningProducts.Count -gt 0) { 
-            $eveningProducts | Get-Random 
-        } else { 
-            $createdProducts | Get-Random 
-        }
+    # Evening sales (6 PM - 10 PM) - Create bills with snacks, beverages, dinner items
+    $eveningBillsCount = Get-Random -Minimum 4 -Maximum 8
+    for ($billNum = 0; $billNum -lt $eveningBillsCount; $billNum++) {
+        # Generate bill ID
+        $billId = "BILL-$(Get-Date $transactionDate -Format 'yyyyMMdd')-$(Get-Random -Minimum 10000 -Maximum 99999)"
         
-        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Evening"
-        
-        try {
-            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
-            $transactionCount++
-        } catch {
-            # Silent fail
+        # Each bill has 2-5 items
+        $itemsPerBill = Get-Random -Minimum 2 -Maximum 5
+        for ($itemNum = 0; $itemNum -lt $itemsPerBill; $itemNum++) {
+            # Prioritize evening products
+            $eveningProducts = $createdProducts | Where-Object { 
+                $_.categoryId -eq $createdCategories[0].id -or  # Beverages
+                $_.categoryId -eq $createdCategories[6].id -or  # Snacks
+                $_.name -like "*Rice*" -or $_.name -like "*Dal*"
+            }
+            $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 6 -and $eveningProducts.Count -gt 0) { 
+                $eveningProducts | Get-Random 
+            } else { 
+                $createdProducts | Get-Random 
+            }
+            
+            $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Evening" -billId $billId
+            
+            try {
+                $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+                $transactionCount++
+            } catch {
+                # Silent fail
+            }
         }
     }
     
@@ -326,11 +363,11 @@ for ($day = 6; $day -ge 0; $day--) {
         }
         
         $transaction = Create-Transaction -product $product -type "PURCHASE" -date $transactionDate -timeOfDay "Restock"
-        
-        try {
-            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
-            $transactionCount++
-        } catch {
+    
+    try {
+        $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+        $transactionCount++
+    } catch {
             # Silent fail
         }
     }
@@ -356,7 +393,7 @@ foreach ($product in $createdProducts) {
                 @{supplier = $createdSuppliers[6]; deliveryDays = 2; margin = 1.05; minOrderQty = 12}  # Cauvery Wholesale
             )
         }
-        # Dairy Products
+    # Dairy Products
         $createdCategories[1].id {
             $suppliers = @(
                 @{supplier = $createdSuppliers[2]; deliveryDays = 1; margin = 1.0; minOrderQty = 20}   # Aavin Dairy
@@ -402,7 +439,7 @@ foreach ($product in $createdProducts) {
                 @{supplier = $createdSuppliers[1]; deliveryDays = 3; margin = 1.03; minOrderQty = 15}  # Amaravathi
             )
         }
-        # Personal Care
+    # Personal Care
         $createdCategories[8].id {
             $suppliers = @(
                 @{supplier = $createdSuppliers[6]; deliveryDays = 2; margin = 1.0; minOrderQty = 24},  # Cauvery
@@ -423,27 +460,27 @@ foreach ($product in $createdProducts) {
     foreach ($supplierInfo in $suppliers) {
         $costPerUnit = [Math]::Round($product.purchasePrice * $supplierInfo.margin, 2)
         
-        $productSupplier = @{
-            productId = $product.id
+                $productSupplier = @{
+                    productId = $product.id
             supplierId = $supplierInfo.supplier.id
             costPerUnit = $costPerUnit
             deliveryDays = $supplierInfo.deliveryDays
             minimumOrderQuantity = $supplierInfo.minOrderQty
             isPreferred = $isFirst  # First supplier is preferred
-            notes = "Regular supplier for $($product.name)"
-        }
-        
-        try {
-            $response = Invoke-RestMethod -Uri "$baseUrl/product-suppliers" -Method Post -Body ($productSupplier | ConvertTo-Json) -ContentType "application/json"
-            $productSupplierCount++
+                    notes = "Regular supplier for $($product.name)"
+                }
+                
+                try {
+                    $response = Invoke-RestMethod -Uri "$baseUrl/product-suppliers" -Method Post -Body ($productSupplier | ConvertTo-Json) -ContentType "application/json"
+                    $productSupplierCount++
             if ($isFirst) {
                 Write-Host "  Linked: $($product.name) <- $($supplierInfo.supplier.name) (₹$costPerUnit/unit, $($supplierInfo.deliveryDays) days) [PREFERRED]" -ForegroundColor Green
             } else {
                 Write-Host "  Linked: $($product.name) <- $($supplierInfo.supplier.name) (₹$costPerUnit/unit, $($supplierInfo.deliveryDays) days)" -ForegroundColor Cyan
             }
-        } catch {
+                } catch {
             Write-Host "  Failed to link: $($product.name) with $($supplierInfo.supplier.name)" -ForegroundColor Red
-        }
+                }
         
         $isFirst = $false
     }

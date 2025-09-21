@@ -37,7 +37,6 @@ import { Product } from '../../models/product.model';
               <th>Total Amount</th>
               <th>Reference</th>
               <th>Notes</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -64,11 +63,6 @@ import { Product } from '../../models/product.model';
               <td>₹{{ transaction.totalAmount }}</td>
               <td>{{ transaction.reference }}</td>
               <td>{{ transaction.notes }}</td>
-              <td>
-                <button *ngIf="transaction.type === 'SALE'" class="btn btn-sm btn-primary" (click)="generateBill(transaction)">
-                  <i class="fas fa-file-invoice"></i> Bill
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -306,11 +300,5 @@ export class TransactionListComponent implements OnInit {
   closeModal(): void {
     this.showAddModal = false;
     this.currentTransaction = this.initializeTransaction();
-  }
-
-  generateBill(transaction: Transaction): void {
-    if (transaction.id) {
-      this.router.navigate(['/bill', transaction.id]);
-    }
   }
 }

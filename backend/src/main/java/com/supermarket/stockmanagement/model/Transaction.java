@@ -20,6 +20,7 @@ public class Transaction {
     private Double unitPrice;
     private Double totalAmount;
     private String reference; // invoice number, receipt number, etc.
+    private String billId; // Groups multiple transactions into one bill for SALE type
     private String notes;
     private LocalDateTime transactionDate;
     

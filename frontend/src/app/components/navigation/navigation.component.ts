@@ -31,6 +31,13 @@ import { Component, OnInit } from '@angular/core';
               </a>
             </li>
             
+            <li class="nav-item">
+              <a routerLink="/bills" routerLinkActive="active">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Customer Bills</span>
+              </a>
+            </li>
+            
             <li class="nav-divider"></li>
             
             <li class="nav-item dropdown">

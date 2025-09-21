@@ -12,6 +12,8 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { OrderNowComponent } from './components/order-now/order-now.component';
 import { CreateOrderComponent } from './components/create-order/create-order.component';
 import { OrdersListComponent } from './components/orders-list/orders-list.component';
+import { BillsListComponent } from './components/bills-list/bills-list.component';
+import { BillDetailsComponent } from './components/bill-details/bill-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -23,6 +25,8 @@ const routes: Routes = [
   { path: 'bill/:id', component: BillComponent },
   { path: 'sales', component: SalesComponent },
   { path: 'sales-bill', component: SalesBillComponent },
+  { path: 'bills', component: BillsListComponent },
+  { path: 'bills/:id', component: BillDetailsComponent },
   { path: 'reports', component: ReportsComponent },
   { path: 'order-now/:id', component: OrderNowComponent },
   { path: 'create-order', component: CreateOrderComponent },
