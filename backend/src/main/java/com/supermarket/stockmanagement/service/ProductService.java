@@ -2,6 +2,7 @@ package com.supermarket.stockmanagement.service;
 
 import com.supermarket.stockmanagement.model.Product;
 import com.supermarket.stockmanagement.repository.ProductRepository;
+import com.supermarket.stockmanagement.exception.InsufficientStockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -62,6 +63,15 @@ public class ProductService {
             if (isAddition) {
                 product.setCurrentStock(product.getCurrentStock() + quantity);
             } else {
+                // Validate sufficient stock before subtraction
+                if (product.getCurrentStock() < quantity) {
+                    throw new InsufficientStockException(
+                        product.getId(), 
+                        product.getName(), 
+                        product.getCurrentStock(), 
+                        quantity
+                    );
+                }
                 product.setCurrentStock(product.getCurrentStock() - quantity);
             }
             product.setUpdatedAt(LocalDateTime.now());

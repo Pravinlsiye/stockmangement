@@ -137,7 +137,40 @@ $products = @(
     @{name = "Surf Excel 1kg"; description = "Detergent powder"; barcode = "890120345643"; categoryId = $createdCategories[9].id; supplierId = $createdSuppliers[6].id; purchasePrice = 90; sellingPrice = 130; currentStock = 45; minStockLevel = 20; unit = "pack"},
     @{name = "Harpic Toilet Cleaner 500ml"; description = "Disinfectant cleaner"; barcode = "890120345644"; categoryId = $createdCategories[9].id; supplierId = $createdSuppliers[6].id; purchasePrice = 60; sellingPrice = 85; currentStock = 8; minStockLevel = 15; unit = "bottle"},
     @{name = "Mosquito Coil Pack"; description = "Good Knight coils"; barcode = "890120345645"; categoryId = $createdCategories[9].id; supplierId = $createdSuppliers[6].id; purchasePrice = 20; sellingPrice = 30; currentStock = 120; minStockLevel = 60; unit = "pack"},
-    @{name = "Broom Stick"; description = "Traditional cleaning broom"; barcode = "890120345646"; categoryId = $createdCategories[9].id; supplierId = $createdSuppliers[6].id; purchasePrice = 30; sellingPrice = 50; currentStock = 40; minStockLevel = 20; unit = "piece"}
+    @{name = "Broom Stick"; description = "Traditional cleaning broom"; barcode = "890120345646"; categoryId = $createdCategories[9].id; supplierId = $createdSuppliers[6].id; purchasePrice = 30; sellingPrice = 50; currentStock = 40; minStockLevel = 20; unit = "piece"},
+    
+    # Additional products for more variety
+    # More Beverages
+    @{name = "Pepsi 2L"; description = "Carbonated soft drink"; barcode = "890120345647"; categoryId = $createdCategories[0].id; supplierId = $createdSuppliers[4].id; purchasePrice = 55; sellingPrice = 90; currentStock = 100; minStockLevel = 40; unit = "bottle"},
+    @{name = "Maaza Mango 600ml"; description = "Mango drink"; barcode = "890120345648"; categoryId = $createdCategories[0].id; supplierId = $createdSuppliers[4].id; purchasePrice = 30; sellingPrice = 40; currentStock = 150; minStockLevel = 60; unit = "bottle"},
+    @{name = "Red Bull Energy Drink"; description = "Energy drink"; barcode = "890120345649"; categoryId = $createdCategories[0].id; supplierId = $createdSuppliers[4].id; purchasePrice = 90; sellingPrice = 125; currentStock = 50; minStockLevel = 20; unit = "can"},
+    @{name = "Nescafe Classic 50g"; description = "Instant coffee"; barcode = "890120345650"; categoryId = $createdCategories[0].id; supplierId = $createdSuppliers[5].id; purchasePrice = 95; sellingPrice = 140; currentStock = 40; minStockLevel = 20; unit = "jar"},
+    @{name = "3 Roses Tea 250g"; description = "Premium tea"; barcode = "890120345651"; categoryId = $createdCategories[0].id; supplierId = $createdSuppliers[5].id; purchasePrice = 60; sellingPrice = 90; currentStock = 60; minStockLevel = 30; unit = "pack"},
+    
+    # More Dairy
+    @{name = "Amul Cheese Slices"; description = "Processed cheese slices"; barcode = "890120345652"; categoryId = $createdCategories[1].id; supplierId = $createdSuppliers[2].id; purchasePrice = 90; sellingPrice = 120; currentStock = 30; minStockLevel = 15; unit = "pack"},
+    @{name = "Nestle Milkmaid 400g"; description = "Condensed milk"; barcode = "890120345653"; categoryId = $createdCategories[1].id; supplierId = $createdSuppliers[2].id; purchasePrice = 100; sellingPrice = 140; currentStock = 25; minStockLevel = 10; unit = "tin"},
+    @{name = "Aavin Buttermilk 200ml"; description = "Spiced buttermilk"; barcode = "890120345654"; categoryId = $createdCategories[1].id; supplierId = $createdSuppliers[2].id; purchasePrice = 8; sellingPrice = 12; currentStock = 80; minStockLevel = 40; unit = "packet"},
+    
+    # More Snacks
+    @{name = "Kurkure Masala Munch"; description = "Crunchy corn puffs"; barcode = "890120345655"; categoryId = $createdCategories[6].id; supplierId = $createdSuppliers[3].id; purchasePrice = 15; sellingPrice = 20; currentStock = 120; minStockLevel = 50; unit = "pack"},
+    @{name = "Hide & Seek Biscuits"; description = "Chocolate chip cookies"; barcode = "890120345656"; categoryId = $createdCategories[6].id; supplierId = $createdSuppliers[3].id; purchasePrice = 25; sellingPrice = 35; currentStock = 80; minStockLevel = 40; unit = "pack"},
+    @{name = "Parle G Biscuits"; description = "Glucose biscuits"; barcode = "890120345657"; categoryId = $createdCategories[6].id; supplierId = $createdSuppliers[3].id; purchasePrice = 8; sellingPrice = 10; currentStock = 200; minStockLevel = 100; unit = "pack"},
+    @{name = "5 Star Chocolate"; description = "Caramel chocolate"; barcode = "890120345658"; categoryId = $createdCategories[6].id; supplierId = $createdSuppliers[3].id; purchasePrice = 15; sellingPrice = 20; currentStock = 150; minStockLevel = 60; unit = "bar"},
+    
+    # More Fruits & Vegetables
+    @{name = "Potato"; description = "Fresh potatoes"; barcode = "890120345659"; categoryId = $createdCategories[3].id; supplierId = $createdSuppliers[0].id; purchasePrice = 18; sellingPrice = 30; currentStock = 200; minStockLevel = 80; unit = "kg"},
+    @{name = "Carrot"; description = "Fresh orange carrots"; barcode = "890120345660"; categoryId = $createdCategories[3].id; supplierId = $createdSuppliers[0].id; purchasePrice = 25; sellingPrice = 40; currentStock = 50; minStockLevel = 25; unit = "kg"},
+    @{name = "Green Chilli"; description = "Fresh green chillies"; barcode = "890120345661"; categoryId = $createdCategories[3].id; supplierId = $createdSuppliers[0].id; purchasePrice = 40; sellingPrice = 60; currentStock = 20; minStockLevel = 10; unit = "kg"},
+    @{name = "Ginger"; description = "Fresh ginger"; barcode = "890120345662"; categoryId = $createdCategories[3].id; supplierId = $createdSuppliers[0].id; purchasePrice = 60; sellingPrice = 100; currentStock = 15; minStockLevel = 8; unit = "kg"},
+    @{name = "Lemon"; description = "Fresh lemons"; barcode = "890120345663"; categoryId = $createdCategories[3].id; supplierId = $createdSuppliers[0].id; purchasePrice = 30; sellingPrice = 50; currentStock = 30; minStockLevel = 15; unit = "kg"},
+    
+    # More Packaged Foods
+    @{name = "Maggi Noodles 4-Pack"; description = "Instant noodles"; barcode = "890120345664"; categoryId = $createdCategories[7].id; supplierId = $createdSuppliers[5].id; purchasePrice = 40; sellingPrice = 52; currentStock = 150; minStockLevel = 60; unit = "pack"},
+    @{name = "Ashirvaad Atta 5kg"; description = "Whole wheat flour"; barcode = "890120345665"; categoryId = $createdCategories[7].id; supplierId = $createdSuppliers[5].id; purchasePrice = 180; sellingPrice = 240; currentStock = 40; minStockLevel = 20; unit = "bag"},
+    @{name = "Fortune Sunflower Oil 1L"; description = "Refined cooking oil"; barcode = "890120345666"; categoryId = $createdCategories[7].id; supplierId = $createdSuppliers[5].id; purchasePrice = 140; sellingPrice = 180; currentStock = 60; minStockLevel = 30; unit = "bottle"},
+    @{name = "Everest Garam Masala 50g"; description = "Spice mix"; barcode = "890120345667"; categoryId = $createdCategories[7].id; supplierId = $createdSuppliers[5].id; purchasePrice = 35; sellingPrice = 50; currentStock = 100; minStockLevel = 50; unit = "pack"},
+    @{name = "Kissan Tomato Ketchup 500g"; description = "Tomato sauce"; barcode = "890120345668"; categoryId = $createdCategories[7].id; supplierId = $createdSuppliers[5].id; purchasePrice = 60; sellingPrice = 85; currentStock = 70; minStockLevel = 35; unit = "bottle"}
 )
 
 # Create products
@@ -163,11 +196,24 @@ Write-Host "Creating transactions..." -ForegroundColor Yellow
 
 # Helper function to create random transactions
 function Create-Transaction {
-    param($product, $type, $daysAgo)
+    param($product, $type, $date, $timeOfDay)
     
-    $quantity = Get-Random -Minimum 5 -Maximum 50
-    if ($type -eq "SALE") {
-        $quantity = Get-Random -Minimum 1 -Maximum 10
+    # Different quantity patterns based on product type and time
+    $quantity = 1
+    if ($type -eq "PURCHASE") {
+        # Bulk purchases for restocking
+        $quantity = Get-Random -Minimum 20 -Maximum 100
+    } else {
+        # Sales patterns based on product category
+        switch ($product.categoryId) {
+            $createdCategories[0].id { $quantity = Get-Random -Minimum 1 -Maximum 5 }  # Beverages
+            $createdCategories[1].id { $quantity = Get-Random -Minimum 1 -Maximum 3 }  # Dairy
+            $createdCategories[2].id { $quantity = Get-Random -Minimum 1 -Maximum 4 }  # Bakery
+            $createdCategories[3].id { $quantity = Get-Random -Minimum 1 -Maximum 5 }  # Fruits & Veg
+            $createdCategories[4].id { $quantity = Get-Random -Minimum 1 -Maximum 2 }  # Meat
+            $createdCategories[6].id { $quantity = Get-Random -Minimum 2 -Maximum 8 }  # Snacks
+            default { $quantity = Get-Random -Minimum 1 -Maximum 4 }
+        }
     }
     
     $unitPrice = if ($type -eq "PURCHASE") { $product.purchasePrice } else { $product.sellingPrice }
@@ -178,111 +224,228 @@ function Create-Transaction {
         quantity = $quantity
         unitPrice = $unitPrice
         reference = if ($type -eq "PURCHASE") { "PO-$(Get-Random -Minimum 1000 -Maximum 9999)" } else { "INV-$(Get-Random -Minimum 1000 -Maximum 9999)" }
-        notes = if ($type -eq "PURCHASE") { "Stock replenishment" } else { "Customer sale" }
+        notes = if ($type -eq "PURCHASE") { "Stock replenishment - $($product.name)" } else { "Sale - $timeOfDay shift" }
     }
     
     return $transaction
 }
 
-# Create transactions for random products
+# Popular products for frequent sales
+$popularProducts = @(
+    "Aavin Milk 500ml", "Aavin Milk 1L", "Modern Bread", "Banana Karpooravalli",
+    "Tomato Local", "Onion", "Thums Up 2L", "Bisleri Water 1L", "Good Day Biscuits",
+    "Lays Chips India Magic Masala", "Ponni Rice 5kg", "Coconut", "Curry Leaves",
+    "Coriander Leaves", "Aavin Curd 500ml", "Karur Bakery Bun"
+)
+
+# Create a week of sales transactions
 $transactionCount = 0
-for ($i = 0; $i -lt 30; $i++) {
-    $randomProduct = $createdProducts | Get-Random
-    $transactionType = @("PURCHASE", "SALE", "SALE", "SALE") | Get-Random  # More sales than purchases
+$currentDate = Get-Date
+
+# Generate sales for the past 7 days
+for ($day = 6; $day -ge 0; $day--) {
+    $transactionDate = $currentDate.AddDays(-$day)
+    $dayName = $transactionDate.ToString("dddd")
     
-    $transaction = Create-Transaction -product $randomProduct -type $transactionType -daysAgo (Get-Random -Minimum 0 -Maximum 30)
+    Write-Host "  Creating transactions for $dayName, $($transactionDate.ToString('yyyy-MM-dd'))..." -ForegroundColor Cyan
     
-    try {
-        $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
-        $transactionCount++
-        Write-Host "  Created $($transaction.type) transaction for $($randomProduct.name)" -ForegroundColor Green
-    } catch {
-        Write-Host "  Failed to create transaction" -ForegroundColor Red
+    # Morning sales (6 AM - 12 PM) - Higher milk, bread, breakfast items
+    $morningSalesCount = Get-Random -Minimum 15 -Maximum 25
+    for ($i = 0; $i -lt $morningSalesCount; $i++) {
+        # Prioritize morning products
+        $morningProducts = $createdProducts | Where-Object { 
+            $_.name -like "*Milk*" -or $_.name -like "*Bread*" -or 
+            $_.name -like "*Bun*" -or $_.name -like "*Curd*" -or
+            $_.categoryId -eq $createdCategories[1].id -or  # Dairy
+            $_.categoryId -eq $createdCategories[2].id      # Bakery
+        }
+        $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 7 -and $morningProducts.Count -gt 0) { 
+            $morningProducts | Get-Random 
+        } else { 
+            $createdProducts | Get-Random 
+        }
+        
+        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Morning"
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+            $transactionCount++
+        } catch {
+            # Silent fail to avoid cluttering output
+        }
+    }
+    
+    # Afternoon sales (12 PM - 6 PM) - Mixed products
+    $afternoonSalesCount = Get-Random -Minimum 20 -Maximum 30
+    for ($i = 0; $i -lt $afternoonSalesCount; $i++) {
+        $product = $createdProducts | Get-Random
+        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Afternoon"
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+            $transactionCount++
+        } catch {
+            # Silent fail
+        }
+    }
+    
+    # Evening sales (6 PM - 10 PM) - Snacks, beverages, dinner items
+    $eveningSalesCount = Get-Random -Minimum 10 -Maximum 20
+    for ($i = 0; $i -lt $eveningSalesCount; $i++) {
+        # Prioritize evening products
+        $eveningProducts = $createdProducts | Where-Object { 
+            $_.categoryId -eq $createdCategories[0].id -or  # Beverages
+            $_.categoryId -eq $createdCategories[6].id -or  # Snacks
+            $_.name -like "*Rice*" -or $_.name -like "*Dal*"
+        }
+        $product = if ((Get-Random -Minimum 0 -Maximum 10) -lt 6 -and $eveningProducts.Count -gt 0) { 
+            $eveningProducts | Get-Random 
+        } else { 
+            $createdProducts | Get-Random 
+        }
+        
+        $transaction = Create-Transaction -product $product -type "SALE" -date $transactionDate -timeOfDay "Evening"
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+            $transactionCount++
+        } catch {
+            # Silent fail
+        }
+    }
+    
+    # Add 1-2 purchase transactions per day for restocking
+    $purchaseCount = Get-Random -Minimum 1 -Maximum 3
+    for ($i = 0; $i -lt $purchaseCount; $i++) {
+        # Select products with low stock
+        $lowStockProducts = $createdProducts | Where-Object { $_.currentStock -lt $_.minStockLevel * 2 }
+        $product = if ($lowStockProducts.Count -gt 0) { 
+            $lowStockProducts | Get-Random 
+        } else { 
+            $createdProducts | Get-Random 
+        }
+        
+        $transaction = Create-Transaction -product $product -type "PURCHASE" -date $transactionDate -timeOfDay "Restock"
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$baseUrl/transactions" -Method Post -Body ($transaction | ConvertTo-Json) -ContentType "application/json"
+            $transactionCount++
+        } catch {
+            # Silent fail
+        }
     }
 }
+
+Write-Host "  Total transactions created: $transactionCount" -ForegroundColor Green
 
 # Create Product-Supplier relationships
 Write-Host ""
 Write-Host "Creating product-supplier relationships..." -ForegroundColor Yellow
 $productSupplierCount = 0
 
-# Define product-supplier relationships with realistic delivery times and costs
-$productSupplierRelationships = @(
-    # Beverages - Multiple suppliers
-    @{productName = "Thums Up 2L"; suppliers = @(
-        @{supplierName = "Tamil Nadu Beverages"; costPerUnit = 55; deliveryDays = 1; minOrderQty = 24; isPreferred = $true},
-        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 58; deliveryDays = 2; minOrderQty = 12; isPreferred = $false}
-    )},
-    @{productName = "Frooti Mango 1L"; suppliers = @(
-        @{supplierName = "Tamil Nadu Beverages"; costPerUnit = 30; deliveryDays = 1; minOrderQty = 24; isPreferred = $true},
-        @{supplierName = "Kongu Provision Stores"; costPerUnit = 32; deliveryDays = 3; minOrderQty = 20; isPreferred = $false}
-    )},
+# Create relationships for ALL products based on their categories and existing supplier assignments
+foreach ($product in $createdProducts) {
+    $suppliers = @()
     
-    # Dairy Products
-    @{productName = "Aavin Milk 500ml"; suppliers = @(
-        @{supplierName = "Aavin Dairy Distributor"; costPerUnit = 20; deliveryDays = 1; minOrderQty = 50; isPreferred = $true}
-    )},
-    @{productName = "Aavin Curd 500g"; suppliers = @(
-        @{supplierName = "Aavin Dairy Distributor"; costPerUnit = 18; deliveryDays = 1; minOrderQty = 30; isPreferred = $true}
-    )},
-    
-    # Rice and Grains
-    @{productName = "Ponni Rice 5kg"; suppliers = @(
-        @{supplierName = "Sri Saravana Stores"; costPerUnit = 180; deliveryDays = 2; minOrderQty = 20; isPreferred = $true},
-        @{supplierName = "Amaravathi Traders"; costPerUnit = 185; deliveryDays = 1; minOrderQty = 10; isPreferred = $false}
-    )},
-    @{productName = "Idly Rice 5kg"; suppliers = @(
-        @{supplierName = "Sri Saravana Stores"; costPerUnit = 160; deliveryDays = 2; minOrderQty = 20; isPreferred = $true},
-        @{supplierName = "Kongu Provision Stores"; costPerUnit = 165; deliveryDays = 3; minOrderQty = 15; isPreferred = $false}
-    )},
-    
-    # Vegetables
-    @{productName = "Tomato (Local)"; suppliers = @(
-        @{supplierName = "Karur Fresh Vegetables"; costPerUnit = 18; deliveryDays = 1; minOrderQty = 10; isPreferred = $true}
-    )},
-    @{productName = "Onion (Small)"; suppliers = @(
-        @{supplierName = "Karur Fresh Vegetables"; costPerUnit = 30; deliveryDays = 1; minOrderQty = 10; isPreferred = $true}
-    )},
-    
-    # Spices
-    @{productName = "MTR Sambar Powder 100g"; suppliers = @(
-        @{supplierName = "Kongu Provision Stores"; costPerUnit = 30; deliveryDays = 2; minOrderQty = 50; isPreferred = $true},
-        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 32; deliveryDays = 1; minOrderQty = 40; isPreferred = $false}
-    )},
-    
-    # Personal Care
-    @{productName = "Hamam Soap 100g"; suppliers = @(
-        @{supplierName = "Cauvery Wholesale Mart"; costPerUnit = 28; deliveryDays = 2; minOrderQty = 72; isPreferred = $true},
-        @{supplierName = "Sri Saravana Stores"; costPerUnit = 30; deliveryDays = 3; minOrderQty = 60; isPreferred = $false}
-    )}
-)
-
-# Create relationships
-foreach ($relation in $productSupplierRelationships) {
-    $product = $createdProducts | Where-Object { $_.name -eq $relation.productName }
-    if ($product) {
-        foreach ($supplierRel in $relation.suppliers) {
-            $supplier = $createdSuppliers | Where-Object { $_.name -eq $supplierRel.supplierName }
-            if ($supplier) {
-                $productSupplier = @{
-                    productId = $product.id
-                    supplierId = $supplier.id
-                    costPerUnit = $supplierRel.costPerUnit
-                    deliveryDays = $supplierRel.deliveryDays
-                    minimumOrderQuantity = $supplierRel.minOrderQty
-                    isPreferred = $supplierRel.isPreferred
-                    notes = "Regular supplier for $($product.name)"
-                }
-                
-                try {
-                    $response = Invoke-RestMethod -Uri "$baseUrl/product-suppliers" -Method Post -Body ($productSupplier | ConvertTo-Json) -ContentType "application/json"
-                    $productSupplierCount++
-                    Write-Host "  Linked: $($product.name) <- $($supplier.name) (₹$($supplierRel.costPerUnit)/unit, $($supplierRel.deliveryDays) days)" -ForegroundColor Green
-                } catch {
-                    Write-Host "  Failed to link: $($product.name) with $($supplier.name)" -ForegroundColor Red
-                }
-            }
+    # Determine suppliers based on category
+    switch ($product.categoryId) {
+        # Beverages
+        $createdCategories[0].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[4]; deliveryDays = 1; margin = 1.0; minOrderQty = 24},  # Tamil Nadu Beverages
+                @{supplier = $createdSuppliers[6]; deliveryDays = 2; margin = 1.05; minOrderQty = 12}  # Cauvery Wholesale
+            )
         }
+        # Dairy Products
+        $createdCategories[1].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[2]; deliveryDays = 1; margin = 1.0; minOrderQty = 20}   # Aavin Dairy
+            )
+        }
+        # Bakery
+        $createdCategories[2].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[1]; deliveryDays = 1; margin = 1.0; minOrderQty = 20},  # Amaravathi Traders
+                @{supplier = $createdSuppliers[3]; deliveryDays = 2; margin = 1.05; minOrderQty = 15}  # Sri Saravana
+            )
+        }
+        # Fruits & Vegetables
+        $createdCategories[3].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[0]; deliveryDays = 1; margin = 1.0; minOrderQty = 10}   # Karur Fresh
+            )
+        }
+        # Meat & Poultry
+        $createdCategories[4].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[0]; deliveryDays = 1; margin = 1.0; minOrderQty = 5}    # Karur Fresh
+            )
+        }
+        # Frozen Foods
+        $createdCategories[5].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[1]; deliveryDays = 2; margin = 1.0; minOrderQty = 10},  # Amaravathi
+                @{supplier = $createdSuppliers[2]; deliveryDays = 1; margin = 1.02; minOrderQty = 15}  # Aavin (for ice cream)
+            )
+        }
+        # Snacks & Confectionery
+        $createdCategories[6].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[3]; deliveryDays = 2; margin = 1.0; minOrderQty = 30},  # Sri Saravana
+                @{supplier = $createdSuppliers[6]; deliveryDays = 1; margin = 1.05; minOrderQty = 20}  # Cauvery
+            )
+        }
+        # Canned & Packaged Foods
+        $createdCategories[7].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[5]; deliveryDays = 2; margin = 1.0; minOrderQty = 20},  # Kongu Provision
+                @{supplier = $createdSuppliers[1]; deliveryDays = 3; margin = 1.03; minOrderQty = 15}  # Amaravathi
+            )
+        }
+        # Personal Care
+        $createdCategories[8].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[6]; deliveryDays = 2; margin = 1.0; minOrderQty = 24},  # Cauvery
+                @{supplier = $createdSuppliers[3]; deliveryDays = 3; margin = 1.05; minOrderQty = 20}  # Sri Saravana
+            )
+        }
+        # Household Items
+        $createdCategories[9].id {
+            $suppliers = @(
+                @{supplier = $createdSuppliers[6]; deliveryDays = 2; margin = 1.0; minOrderQty = 20},  # Cauvery
+                @{supplier = $createdSuppliers[5]; deliveryDays = 3; margin = 1.03; minOrderQty = 15}  # Kongu
+            )
+        }
+    }
+    
+    # Create relationships with each supplier
+    $isFirst = $true
+    foreach ($supplierInfo in $suppliers) {
+        $costPerUnit = [Math]::Round($product.purchasePrice * $supplierInfo.margin, 2)
+        
+        $productSupplier = @{
+            productId = $product.id
+            supplierId = $supplierInfo.supplier.id
+            costPerUnit = $costPerUnit
+            deliveryDays = $supplierInfo.deliveryDays
+            minimumOrderQuantity = $supplierInfo.minOrderQty
+            isPreferred = $isFirst  # First supplier is preferred
+            notes = "Regular supplier for $($product.name)"
+        }
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$baseUrl/product-suppliers" -Method Post -Body ($productSupplier | ConvertTo-Json) -ContentType "application/json"
+            $productSupplierCount++
+            if ($isFirst) {
+                Write-Host "  Linked: $($product.name) <- $($supplierInfo.supplier.name) (₹$costPerUnit/unit, $($supplierInfo.deliveryDays) days) [PREFERRED]" -ForegroundColor Green
+            } else {
+                Write-Host "  Linked: $($product.name) <- $($supplierInfo.supplier.name) (₹$costPerUnit/unit, $($supplierInfo.deliveryDays) days)" -ForegroundColor Cyan
+            }
+        } catch {
+            Write-Host "  Failed to link: $($product.name) with $($supplierInfo.supplier.name)" -ForegroundColor Red
+        }
+        
+        $isFirst = $false
     }
 }
 

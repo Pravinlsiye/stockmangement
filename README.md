@@ -7,6 +7,63 @@ A comprehensive inventory management system designed for supermarkets to track p
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
 
+## 📹 Demo Video
+
+<div align="center">
+  
+  ### 🎥 Live Demo (Full Application Walkthrough)
+  
+  ![StockPro Demo - Complete](demo/stockapp-medium.gif)
+  
+  > **[📹 Watch MP4 Video (Highest Quality)](demo/stockapp.mp4)**
+  
+</div>
+
+### Key Features Demonstrated:
+- ✅ **Product Management** - Add, edit, and track inventory
+- ✅ **Sales Terminal** - Modern POS interface with search
+- ✅ **Stock Validation** - Prevents negative inventory
+- ✅ **Order Management** - Create and track purchase orders
+- ✅ **Analytics Dashboard** - Real-time business insights
+- ✅ **Multi-Supplier Support** - Compare prices from different suppliers
+- ✅ **Professional Billing** - Generate and print receipts
+
+> **Note**: To embed the video directly in GitHub:
+> 1. Go to any GitHub issue in your repository
+> 2. Drag and drop the `demo/stockapp.mp4` file into the comment box
+> 3. GitHub will upload it and generate a URL
+> 4. Replace the video link above with the generated URL
+
+## 📸 Screenshots
+
+<details>
+<summary><b>Click to view application screenshots</b></summary>
+
+### Dashboard
+- Real-time overview of inventory status
+- Low stock alerts and quick actions
+- Sales and purchase summaries
+
+### Sales Terminal
+- Modern POS interface
+- Product search with autocomplete
+- Stock validation prevents overselling
+- Professional bill generation
+
+### Product Management
+- Complete CRUD operations
+- Barcode support
+- Multi-supplier relationships
+- Stock tracking
+
+### Analytics & Reports
+- Sales frequency charts
+- Top products analysis
+- Revenue tracking
+- Category performance
+
+</details>
+
 ## 🚀 Quick Start
 
 ### Prerequisites
