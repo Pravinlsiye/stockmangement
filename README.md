@@ -21,48 +21,18 @@ A comprehensive inventory management system designed for supermarkets to track p
 
 ### Key Features Demonstrated:
 - ✅ **Product Management** - Add, edit, and track inventory
-- ✅ **Sales Terminal** - Modern POS interface with search
-- ✅ **Stock Validation** - Prevents negative inventory
+- ✅ **Sales Terminal** - Modern POS interface with smart search and stock validation
+- ✅ **Customer Bills** - Grouped bills with multiple items per customer
+- ✅ **Bill Themes** - Multiple receipt styles (Traditional, Classic, Modern, Elegant)
 - ✅ **Order Management** - Create and track purchase orders
-- ✅ **Analytics Dashboard** - Real-time business insights
+- ✅ **Analytics Dashboard** - Real-time business insights with historical trends
 - ✅ **Multi-Supplier Support** - Compare prices from different suppliers
 - ✅ **Professional Billing** - Generate and print receipts
 
-> **Note**: To embed the video directly in GitHub:
-> 1. Go to any GitHub issue in your repository
-> 2. Drag and drop the `demo/stockapp.mp4` file into the comment box
-> 3. GitHub will upload it and generate a URL
-> 4. Replace the video link above with the generated URL
 
 ## 📸 Screenshots
 
-<details>
-<summary><b>Click to view application screenshots</b></summary>
 
-### Dashboard
-- Real-time overview of inventory status
-- Low stock alerts and quick actions
-- Sales and purchase summaries
-
-### Sales Terminal
-- Modern POS interface
-- Product search with autocomplete
-- Stock validation prevents overselling
-- Professional bill generation
-
-### Product Management
-- Complete CRUD operations
-- Barcode support
-- Multi-supplier relationships
-- Stock tracking
-
-### Analytics & Reports
-- Sales frequency charts
-- Top products analysis
-- Revenue tracking
-- Category performance
-
-</details>
 
 ## 🚀 Quick Start
 
@@ -144,10 +114,23 @@ The database is automatically initialized with:
 
 ### Sales & POS Features
 - **Sales Terminal**: Modern POS-style interface for quick sales
-- **Autocomplete Search**: Find products by name or barcode
+- **Smart Product Search**: Real-time autocomplete with stock availability
 - **Shopping Cart**: Add multiple items with quantity management
-- **Bill Generation**: Professional receipts with print functionality
+- **Grouped Customer Bills**: Multiple items per bill, just like real shops
+- **Bill Generation**: Automatic bill creation with unique IDs
+- **Stock Validation**: Prevents overselling with detailed error messages
 - **One-Click Checkout**: Streamlined sales workflow
+
+### Billing System
+- **Customer Bills Page**: View all grouped customer purchases
+- **Pagination Support**: Browse through bills efficiently (5/10/20/50 per page)
+- **Multiple Bill Themes**: 
+  - Traditional Receipt (Default) - Optimized for 80mm thermal printers
+  - Classic Receipt - Simple monospace style
+  - Modern Invoice - Professional business format
+  - Elegant Style - Premium look with enhanced spacing
+- **Print Optimization**: All themes work perfectly with receipt printers
+- **Theme Persistence**: Your theme choice is remembered
 
 ### Order Management
 - **Purchase Orders**: Create and track orders from suppliers
@@ -157,55 +140,59 @@ The database is automatically initialized with:
 - **Expected Delivery Dates**: Track when orders will arrive
 
 ### Business Analytics
-- **Sales Frequency Charts**: View sales trends over time
-- **Product Performance**: Identify top-selling products
-- **Category Analysis**: Sales distribution by category
-- **Revenue Analytics**: Track daily, weekly, and monthly revenue
-- **Purchase Predictions**: AI-suggested reorder points
-- **Interactive Charts**: Powered by Chart.js
+- **Sales Frequency Charts**: View sales trends over time (7/30/90 days)
+- **Product Performance**: Identify top-selling products with quantity metrics
+- **Category Analysis**: Sales distribution by category (doughnut chart)
+- **Revenue vs Profit Trend**: Compare revenue and profit across time periods
+- **Purchase Predictions**: Smart reorder suggestions based on sales velocity
+- **Stock Status Indicators**: Visual alerts for urgent orders
+- **Interactive Charts**: Powered by Chart.js with real historical data
+- **Paginated Product Trends**: Browse through all products with stock predictions
 
 ### UI/UX Enhancements
-- **Toast Notifications**: No more alert boxes - beautiful notifications
+- **Toast Notifications**: Beautiful notifications for success/error messages
+- **Stock Error Modal**: Detailed stock validation with auto-adjust options
 - **Modal Dialogs**: Clean, professional popups for data entry
-- **Responsive Design**: Works on desktop and mobile
+- **Responsive Design**: Works on desktop and mobile devices
 - **Font Awesome Icons**: Consistent iconography throughout
-- **Print-Friendly**: Optimized bill printing for receipt printers
-- **Pagination**: Efficient data browsing for large datasets
+- **Print-Friendly**: Optimized bill printing for 80mm thermal printers
+- **Smart Pagination**: Customer bills and analytics with flexible page sizes
+- **Real-time Search**: Product search with dropdown positioning
+- **Clean Bill Format**: No divider lines, just clean professional receipts
 
 ## 🏗️ System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                           Frontend (Angular)                         │
-│                                                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌──────────┐ │
-│  │  Dashboard  │  │   Products   │  │ Categories  │  │Suppliers │ │
-│  └─────────────┘  └──────────────┘  └─────────────┘  └──────────┘ │
-│                                                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌──────────┐ │
-│  │Sales Terminal│  │   Reports    │  │   Orders    │  │   Bills  │ │
-│  └─────────────┘  └──────────────┘  └─────────────┘  └──────────┘ │
+│                           Frontend (Angular)                        │
+│                                                                     │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌──────────┐   │
+│  │  Dashboard  │  │   Products   │  │ Categories  │  │Suppliers │   │
+│  └─────────────┘  └──────────────┘  └─────────────┘  └──────────┘   │
+│                                                                     │
+│  ┌────────────────┐ ┌──────────────┐ ┌─────────────┐  ┌──────────┐  │
+│  │ Sales Terminal │ │   Reports    │ │   Orders    │  │   Bills  │  │
+│  └────────────────┘ └──────────────┘ └─────────────┘  └──────────┘  │
 └────────────────────────────────┬────────────────────────────────────┘
                                  │ HTTP/REST
                                  │
 ┌────────────────────────────────┴────────────────────────────────────┐
 │                      Backend (Spring Boot)                          │
-│                                                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐               │
-│  │ Controllers │  │   Services   │  │Repositories │               │
-│  └──────┬──────┘  └──────┬───────┘  └──────┬──────┘               │
-│         │                 │                  │                       │
-│  ┌──────┴──────────────────┴─────────────────┴──────┐              │
-│  │              Spring Data MongoDB                  │              │
-│  └───────────────────────┬──────────────────────────┘              │
-└──────────────────────────┼──────────────────────────────────────────┘
-                           │
-                           │ MongoDB Protocol
-                           │
-                    ┌──────┴──────┐
-                    │   MongoDB   │
-                    │  (Docker)   │
-                    └─────────────┘
+│                                                                     │
+│      ┌─────────────┐   ┌──────────────┐   ┌─────────────┐           │
+│      │ Controllers │   │   Services   │   │Repositories │           │
+│      └──────┬──────┘   └──────┬───────┘   └──────┬──────┘           │
+│             │                 │                  │                  │
+│      ┌──────┴─────────────────┴──────────────────┴──────┐           │
+│      │                Spring Data MongoDB               │           │
+│      └───────────────────────┬──────────────────────────┘           │
+└──────────────────────────────┼──────────────────────────────────────┘
+                               │
+                               │ MongoDB Protocol
+                        ┌──────┴──────┐ 
+                        │   MongoDB   │
+                        │   (cloud)   │ 
+                        └─────────────┘
 ```
 
 ## 🛠️ Technology Stack
@@ -264,6 +251,9 @@ stockmanagement/
 │   │   │   │   ├── sales/
 │   │   │   │   ├── reports/
 │   │   │   │   ├── orders-list/
+│   │   │   │   ├── bills-list/
+│   │   │   │   ├── bill-details/
+│   │   │   │   ├── bill/
 │   │   │   │   └── notification/
 │   │   │   ├── models/        # TypeScript Models
 │   │   │   ├── services/      # API Services
@@ -348,8 +338,32 @@ stockmanagement/
   unitPrice: Double,
   totalAmount: Double,
   reference: String,
+  billId: String,          // Groups SALE transactions into customer bills
   notes: String,
   transactionDate: LocalDateTime
+}
+```
+
+### Bill (DTO)
+```java
+{
+  billId: String,
+  billDate: LocalDateTime,
+  totalAmount: Double,
+  totalItems: Integer,
+  items: List<BillItem>
+}
+```
+
+### BillItem (DTO)
+```java
+{
+  productId: String,
+  productName: String,
+  productCode: String,
+  quantity: Integer,
+  unitPrice: Double,
+  totalPrice: Double
 }
 ```
 
@@ -400,7 +414,12 @@ stockmanagement/
 - `GET /api/analytics/sales-frequency?days={days}` - Sales frequency data
 - `GET /api/analytics/product-trends` - Product sales trends
 - `GET /api/analytics/top-products?limit={limit}` - Top selling products
-- `GET /api/analytics/revenue?period={period}` - Revenue analytics
+- `GET /api/analytics/revenue` - Revenue and profit analytics
+
+### Bills
+- `GET /api/bills` - List all grouped customer bills
+- `GET /api/bills/{billId}` - Get detailed bill with items
+- `GET /api/bills/generate-id` - Generate a new unique bill ID
 
 ## 💾 MongoDB Configuration
 
@@ -433,20 +452,31 @@ services:
 
 The system includes a script to populate realistic Tamil Nadu-based supermarket data:
 - 10 Categories (Beverages, Dairy, Bakery, etc.)
-- 10 Local Suppliers from Karur region
-- 50+ Products with Indian Rupee pricing
-- Product-Supplier relationships with pricing
-- 30+ Transactions showing purchase and sale history
-- Realistic Indian product names and brands
+- 7 Local Suppliers from Karur region
+- 68 Products with Indian Rupee pricing (including local favorites)
+- 113 Product-Supplier relationships with multiple suppliers per product
+- 600+ Transactions with 7 days of historical data
+- 150 Grouped Customer Bills (multiple items per bill)
+- Realistic time-based sales patterns (morning, afternoon, evening)
+- Tamil Nadu products: Aavin Milk, Filter Coffee, Murukku, etc.
 
 ## 🚦 Usage Guide
 
 ### Creating a Sale
 1. Navigate to Sales Terminal
-2. Search for products by name or barcode
-3. Click to add to cart
+2. Search for products by name (no barcode needed)
+3. Click products to add to cart (out-of-stock items are marked)
 4. Adjust quantities as needed
-5. Complete sale and print bill
+5. Click "Generate Bill" to complete the sale
+6. System automatically creates a grouped bill with unique ID
+7. Navigate to Customer Bills to view/print the receipt
+
+### Viewing Customer Bills
+1. Go to Customer Bills from navigation menu
+2. Browse through all bills with pagination (10/20/50 per page)
+3. Click "View" to see bill details
+4. Choose your preferred theme (Traditional/Classic/Modern/Elegant)
+5. Click "Print" for thermal printer-optimized output
 
 ### Managing Orders
 1. Low stock items show "Order Now" button
