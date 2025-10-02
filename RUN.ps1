@@ -12,10 +12,192 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Database Mode: $DbMode" -ForegroundColor Yellow
 Write-Host ""
 
-# Set Java Home if possible
-$javaPath = "C:\Program Files\Java\jdk-22"
-if (Test-Path $javaPath) {
-    $env:JAVA_HOME = $javaPath
+# ============================================
+# DEPENDENCY INSTALLATION FUNCTIONS
+# ============================================
+
+function Test-JavaInstalled {
+    try {
+        $javaVersion = & java -version 2>&1 | Select-String "version"
+        if ($javaVersion) {
+            Write-Host "Java is already installed: $javaVersion" -ForegroundColor Green
+            return $true
+        }
+    } catch {
+        return $false
+    }
+    return $false
+}
+
+function Test-NodeInstalled {
+    try {
+        $nodeVersion = & node --version 2>&1
+        if ($nodeVersion) {
+            Write-Host "Node.js is already installed: $nodeVersion" -ForegroundColor Green
+            return $true
+        }
+    } catch {
+        return $false
+    }
+    return $false
+}
+
+function Install-Java {
+    Write-Host "Installing Java Development Kit (JDK)..." -ForegroundColor Yellow
+    
+    # Check if winget is available
+    $wingetAvailable = Get-Command winget -ErrorAction SilentlyContinue
+    
+    if ($wingetAvailable) {
+        Write-Host "Using winget to install JDK 17 (required by project)..." -ForegroundColor Cyan
+        try {
+            # Install OpenJDK 17 (LTS) - Required by Spring Boot 3.1.5
+            winget install --id Microsoft.OpenJDK.17 --accept-package-agreements --accept-source-agreements --silent
+            
+            # Refresh environment variables
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            
+            Write-Host "Java 17 installed successfully!" -ForegroundColor Green
+            
+            # Find and set JAVA_HOME
+            $possibleJavaPaths = @(
+                "C:\Program Files\Microsoft\jdk-17*",
+                "C:\Program Files\Eclipse Adoptium\jdk-17*",
+                "C:\Program Files\Java\jdk-17*"
+            )
+            
+            foreach ($pattern in $possibleJavaPaths) {
+                $javaDir = Get-ChildItem -Path (Split-Path $pattern) -Directory -Filter (Split-Path $pattern -Leaf) -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($javaDir) {
+                    $script:javaPath = $javaDir.FullName
+                    [System.Environment]::SetEnvironmentVariable("JAVA_HOME", $script:javaPath, "Machine")
+                    Write-Host "JAVA_HOME set to: $script:javaPath" -ForegroundColor Green
+                    break
+                }
+            }
+            
+            return $true
+        } catch {
+            Write-Host "Failed to install Java using winget: $_" -ForegroundColor Red
+            return $false
+        }
+    } else {
+        Write-Host "Winget not available. Please install Java manually:" -ForegroundColor Yellow
+        Write-Host "1. Download from: https://www.microsoft.com/openjdk" -ForegroundColor Cyan
+        Write-Host "2. Or install winget first and run this script again" -ForegroundColor Cyan
+        return $false
+    }
+}
+
+function Install-NodeJS {
+    Write-Host "Installing Node.js..." -ForegroundColor Yellow
+    
+    # Check if winget is available
+    $wingetAvailable = Get-Command winget -ErrorAction SilentlyContinue
+    
+    if ($wingetAvailable) {
+        Write-Host "Using winget to install Node.js LTS..." -ForegroundColor Cyan
+        try {
+            # Install Node.js LTS
+            winget install --id OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements --silent
+            
+            # Refresh environment variables
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            
+            Write-Host "Node.js installed successfully!" -ForegroundColor Green
+            return $true
+        } catch {
+            Write-Host "Failed to install Node.js using winget: $_" -ForegroundColor Red
+            return $false
+        }
+    } else {
+        Write-Host "Winget not available. Please install Node.js manually:" -ForegroundColor Yellow
+        Write-Host "1. Download from: https://nodejs.org/" -ForegroundColor Cyan
+        Write-Host "2. Or install winget first and run this script again" -ForegroundColor Cyan
+        return $false
+    }
+}
+
+function Initialize-Dependencies {
+    Write-Host "Checking dependencies..." -ForegroundColor Cyan
+    Write-Host ""
+    
+    # Check and install Java
+    if (-not (Test-JavaInstalled)) {
+        Write-Host "Java is not installed." -ForegroundColor Yellow
+        $installJava = Read-Host "Would you like to install Java now? (Y/N)"
+        if ($installJava -eq 'Y' -or $installJava -eq 'y') {
+            $javaInstalled = Install-Java
+            if (-not $javaInstalled) {
+                Write-Host "Java installation failed. Please install it manually and restart the script." -ForegroundColor Red
+                exit 1
+            }
+            Write-Host "Please close this window and restart the script for PATH changes to take effect." -ForegroundColor Yellow
+            exit 0
+        } else {
+            Write-Host "Java is required to run the backend. Exiting." -ForegroundColor Red
+            exit 1
+        }
+    }
+    
+    # Check and install Node.js
+    if (-not (Test-NodeInstalled)) {
+        Write-Host "Node.js is not installed." -ForegroundColor Yellow
+        $installNode = Read-Host "Would you like to install Node.js now? (Y/N)"
+        if ($installNode -eq 'Y' -or $installNode -eq 'y') {
+            $nodeInstalled = Install-NodeJS
+            if (-not $nodeInstalled) {
+                Write-Host "Node.js installation failed. Please install it manually and restart the script." -ForegroundColor Red
+                exit 1
+            }
+            Write-Host "Please close this window and restart the script for PATH changes to take effect." -ForegroundColor Yellow
+            exit 0
+        } else {
+            Write-Host "Node.js is required to run the frontend. Exiting." -ForegroundColor Red
+            exit 1
+        }
+    }
+    
+    Write-Host ""
+    Write-Host "All dependencies are installed!" -ForegroundColor Green
+    Write-Host ""
+}
+
+# ============================================
+# RUN DEPENDENCY CHECK
+# ============================================
+if ($Action.ToLower() -eq "start") {
+    Initialize-Dependencies
+}
+
+# ============================================
+# SET JAVA HOME
+# ============================================
+$script:javaPath = $env:JAVA_HOME
+if (-not $script:javaPath) {
+    # Try to find Java installation (prefer Java 17 as required by project)
+    $possibleJavaPaths = @(
+        "C:\Program Files\Microsoft\jdk-17*",
+        "C:\Program Files\Eclipse Adoptium\jdk-17*",
+        "C:\Program Files\Java\jdk-17*",
+        "C:\Program Files\Microsoft\jdk-*",
+        "C:\Program Files\Eclipse Adoptium\jdk-*",
+        "C:\Program Files\Java\jdk-*"
+    )
+    
+    foreach ($pattern in $possibleJavaPaths) {
+        $parentPath = Split-Path $pattern
+        $filter = Split-Path $pattern -Leaf
+        if (Test-Path $parentPath) {
+            $javaDir = Get-ChildItem -Path $parentPath -Directory -Filter $filter -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($javaDir) {
+                $script:javaPath = $javaDir.FullName
+                $env:JAVA_HOME = $script:javaPath
+                Write-Host "Found Java at: $script:javaPath" -ForegroundColor Green
+                break
+            }
+        }
+    }
 }
 
 function Start-Application {
