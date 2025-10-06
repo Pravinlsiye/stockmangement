@@ -241,9 +241,17 @@ function Start-Application {
     
     # Install frontend dependencies if needed
     if (-not (Test-Path "frontend/node_modules")) {
-        Write-Host "Installing frontend dependencies..." -ForegroundColor Yellow
+        Write-Host "Installing frontend dependencies (this may take a few minutes)..." -ForegroundColor Yellow
+        Write-Host "Dependencies are properly configured for Angular 16 compatibility" -ForegroundColor Gray
         Set-Location frontend
-        & npm install --silent
+        & npm install
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Frontend dependency installation failed!" -ForegroundColor Red
+            Write-Host "Please check the error above and ensure Node.js is properly installed." -ForegroundColor Yellow
+            Set-Location ..
+            return
+        }
+        Write-Host "Frontend dependencies installed successfully!" -ForegroundColor Green
         Set-Location ..
     }
     
