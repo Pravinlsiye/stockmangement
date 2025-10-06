@@ -205,29 +205,45 @@ function Start-Application {
     
     # Check Docker (if local mode)
     if ($DbMode -eq "local") {
-        $dockerRunning = docker version 2>&1 | Select-String "Server:"
-        if (-not $dockerRunning) {
-            Write-Host "Docker Desktop is not running!" -ForegroundColor Red
-            Write-Host "Please start Docker Desktop first." -ForegroundColor Yellow
+        # Check if Docker is installed
+        $dockerInstalled = Get-Command docker -ErrorAction SilentlyContinue
+        
+        if (-not $dockerInstalled) {
+            Write-Host "Docker is not installed. Skipping local MongoDB setup." -ForegroundColor Yellow
+            Write-Host "Please use -DbMode cloud to connect to MongoDB Atlas" -ForegroundColor Yellow
+            Write-Host "Or install Docker to use local MongoDB" -ForegroundColor Yellow
             return
         }
-    }
-    
-    # Start MongoDB (if local mode)
-    if ($DbMode -eq "local") {
-        Write-Host "Starting MongoDB in Docker..." -ForegroundColor Yellow
-        $mongoContainer = docker ps -a --filter "name=supermarket-mongodb" --format "{{.Names}}"
         
-        if ($mongoContainer) {
-            $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}"
-            if (-not $mongoRunning) {
-                docker start supermarket-mongodb
+        # Check if Docker is running
+        $dockerRunning = docker version 2>&1 | Select-String "Server:" -ErrorAction SilentlyContinue
+        if (-not $dockerRunning) {
+            Write-Host "Docker Desktop is not running!" -ForegroundColor Red
+            Write-Host "Please start Docker Desktop first or use -DbMode cloud" -ForegroundColor Yellow
+            return
+        }
+        
+        # Start MongoDB in Docker
+        Write-Host "Starting MongoDB in Docker..." -ForegroundColor Yellow
+        try {
+            $mongoContainer = docker ps -a --filter "name=supermarket-mongodb" --format "{{.Names}}" 2>$null
+            
+            if ($mongoContainer) {
+                $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}" 2>$null
+                if (-not $mongoRunning) {
+                    docker start supermarket-mongodb 2>$null
+                }
+                Write-Host "MongoDB is running" -ForegroundColor Green
+            } else {
+                docker-compose up -d mongodb 2>$null
+                Start-Sleep -Seconds 5
+                Write-Host "MongoDB started" -ForegroundColor Green
             }
-            Write-Host "MongoDB is running" -ForegroundColor Green
-        } else {
-            docker-compose up -d mongodb
-            Start-Sleep -Seconds 5
-            Write-Host "MongoDB started" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Failed to start MongoDB container: $_" -ForegroundColor Red
+            Write-Host "Consider using -DbMode cloud instead" -ForegroundColor Yellow
+            return
         }
     }
     
@@ -323,34 +339,53 @@ function Stop-Application {
     # Stop Backend
     $backendProcess = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
     if ($backendProcess) {
-        Stop-Process -Id $backendProcess -Force
+        Stop-Process -Id $backendProcess -Force -ErrorAction SilentlyContinue
         Write-Host "Backend stopped" -ForegroundColor Green
     }
     
     # Stop Frontend
     $frontendProcess = Get-NetTCPConnection -LocalPort 4200 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
     if ($frontendProcess) {
-        Stop-Process -Id $frontendProcess -Force
+        Stop-Process -Id $frontendProcess -Force -ErrorAction SilentlyContinue
         Write-Host "Frontend stopped" -ForegroundColor Green
     }
     
-    # Stop MongoDB
-    $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}"
-    if ($mongoRunning) {
-        docker stop supermarket-mongodb
-        Write-Host "MongoDB stopped" -ForegroundColor Green
+    # Stop MongoDB (only if Docker is available)
+    $dockerInstalled = Get-Command docker -ErrorAction SilentlyContinue
+    if ($dockerInstalled) {
+        try {
+            $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}" 2>$null
+            if ($mongoRunning) {
+                docker stop supermarket-mongodb 2>$null
+                Write-Host "MongoDB stopped" -ForegroundColor Green
+            }
+        }
+        catch {
+            # Docker command failed, but continue anyway
+            Write-Host "MongoDB stop skipped (Docker not available)" -ForegroundColor Gray
+        }
     }
 }
 
 function Show-Status {
     Write-Host "Checking Application Status..." -ForegroundColor Yellow
     
-    # Check MongoDB
-    $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}"
-    if ($mongoRunning) {
-        Write-Host "MongoDB: Running" -ForegroundColor Green
+    # Check MongoDB (only if Docker is available)
+    $dockerInstalled = Get-Command docker -ErrorAction SilentlyContinue
+    if ($dockerInstalled) {
+        try {
+            $mongoRunning = docker ps --filter "name=supermarket-mongodb" --format "{{.Names}}" 2>$null
+            if ($mongoRunning) {
+                Write-Host "MongoDB: Running" -ForegroundColor Green
+            } else {
+                Write-Host "MongoDB: Not running" -ForegroundColor Red
+            }
+        }
+        catch {
+            Write-Host "MongoDB: Docker not available" -ForegroundColor Gray
+        }
     } else {
-        Write-Host "MongoDB: Not running" -ForegroundColor Red
+        Write-Host "MongoDB: Docker not installed (use cloud mode)" -ForegroundColor Gray
     }
     
     # Check Backend
