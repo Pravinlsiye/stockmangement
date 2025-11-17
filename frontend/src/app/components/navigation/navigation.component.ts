@@ -81,11 +81,21 @@ import { AuthService } from '../../services/auth.service';
             <li class="nav-item user-menu">
               <a class="dropdown-toggle" (click)="toggleUserDropdown($event)">
                 <i class="fas fa-user-circle"></i>
-                <span>{{ currentUser?.username || 'User' }}</span>
-                <i class="fas fa-chevron-down dropdown-icon"></i>
+                <span class="user-name">{{ currentUser?.username || 'User' }}</span>
+                <i class="fas fa-chevron-down dropdown-icon" [class.rotated]="showUserDropdown"></i>
               </a>
-              <ul class="dropdown-menu" [class.show]="showUserDropdown">
-                <li><a (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              <ul class="dropdown-menu user-dropdown" [class.show]="showUserDropdown">
+                <li class="user-info">
+                  <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                  </div>
+                  <div class="user-details">
+                    <div class="user-name-text">{{ currentUser?.username || 'User' }}</div>
+                    <div class="user-email-text" *ngIf="currentUser?.email">{{ currentUser?.email }}</div>
+                  </div>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li><a (click)="logout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
               </ul>
             </li>
           </ul>
@@ -222,11 +232,22 @@ import { AuthService } from '../../services/auth.service';
     .dropdown-icon {
       font-size: 12px !important;
       margin-left: 5px;
-      transition: transform 0.3s;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-icon.rotated {
+      transform: rotate(180deg);
     }
     
-    .dropdown-toggle:hover .dropdown-icon {
+    .dropdown-toggle:hover .dropdown-icon:not(.rotated) {
       transform: translateY(2px);
+    }
+
+    .user-name {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     
     /* Divider */
@@ -309,16 +330,134 @@ import { AuthService } from '../../services/auth.service';
     .user-menu .dropdown-toggle:hover {
       background: rgba(255, 255, 255, 0.2);
     }
+
+    .user-menu .dropdown-menu {
+      right: 0;
+      left: auto;
+      min-width: 220px;
+    }
+
+    .user-dropdown .user-info {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8f9fa;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .user-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-name-text {
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-email-text {
+      font-size: 13px;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 8px 0;
+    }
+
+    .logout-link {
+      color: #e74c3c !important;
+    }
+
+    .logout-link:hover {
+      background: #fee !important;
+      color: #c33 !important;
+    }
+
+    .logout-link i {
+      color: #e74c3c;
+    }
+
+    .logout-link:hover i {
+      color: #c33;
+    }
     
-    /* Responsive */
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .nav-container {
+        padding: 0 20px;
+      }
+
+      .nav-item > a span,
+      .dropdown-toggle span {
+        font-size: 14px;
+      }
+    }
+
     @media (max-width: 768px) {
       .nav-container {
         height: 60px;
-        padding: 0 20px;
+        padding: 0 15px;
+        flex-wrap: wrap;
+      }
+      
+      .nav-brand {
+        gap: 10px;
+      }
+
+      .logo-wrapper {
+        width: 40px;
+        height: 40px;
+      }
+
+      .nav-logo {
+        width: 30px;
+        height: 30px;
+      }
+
+      .brand-name {
+        font-size: 18px;
       }
       
       .brand-tagline {
         display: none;
+      }
+
+      .nav-menu-wrapper {
+        width: 100%;
+        order: 3;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-menu {
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
       }
       
       .nav-item > a span,
@@ -328,11 +467,130 @@ import { AuthService } from '../../services/auth.service';
       
       .nav-item > a,
       .dropdown-toggle {
-        padding: 10px 12px;
+        padding: 8px 10px;
+        font-size: 14px;
+        min-width: 44px; /* Better touch target */
+        justify-content: center;
+      }
+
+      .nav-item i {
+        font-size: 16px;
       }
       
       .nav-divider {
         display: none;
+      }
+
+      .user-menu {
+        margin-left: auto;
+        order: 2;
+      }
+
+      .user-menu .dropdown-toggle {
+        padding: 8px 12px;
+      }
+
+      .user-menu .dropdown-menu {
+        right: 0;
+        left: auto;
+        min-width: 200px;
+        margin-top: 8px;
+      }
+
+      .user-dropdown .user-info {
+        padding: 12px 15px;
+        gap: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+
+      .user-name-text {
+        font-size: 14px;
+      }
+
+      .user-email-text {
+        font-size: 12px;
+      }
+
+      .dropdown-menu a {
+        padding: 14px 18px;
+        font-size: 14px;
+        min-height: 44px; /* Better touch target */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container {
+        height: 56px;
+        padding: 0 10px;
+      }
+
+      .logo-wrapper {
+        width: 36px;
+        height: 36px;
+      }
+
+      .nav-logo {
+        width: 28px;
+        height: 28px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+
+      .nav-menu-wrapper {
+        margin-top: 8px;
+        padding-top: 8px;
+      }
+
+      .nav-item > a,
+      .dropdown-toggle {
+        padding: 6px 8px;
+        font-size: 13px;
+      }
+
+      .nav-item i {
+        font-size: 15px;
+      }
+
+      .user-menu .dropdown-menu {
+        min-width: 180px;
+      }
+
+      .user-dropdown .user-info {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      .user-name-text {
+        font-size: 13px;
+      }
+
+      .user-email-text {
+        font-size: 11px;
+      }
+    }
+
+    /* Landscape orientation on mobile */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .nav-container {
+        height: 56px;
+      }
+
+      .nav-menu-wrapper {
+        margin-top: 5px;
+        padding-top: 5px;
       }
     }
   `]
