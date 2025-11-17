@@ -45,6 +45,7 @@ import { AuthService } from '../../services/auth.service';
               formControlName="password"
               class="form-control"
               placeholder="Enter your password"
+              autocomplete="current-password"
               [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
             />
             <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
@@ -128,6 +129,7 @@ import { AuthService } from '../../services/auth.service';
               formControlName="password"
               class="form-control"
               placeholder="Choose a password"
+              autocomplete="new-password"
               [class.error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
             />
             <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">

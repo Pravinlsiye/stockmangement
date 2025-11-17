@@ -20,5 +20,7 @@ export interface AuthResponse {
   username?: string;
   email?: string;
   message: string;
+  accessToken?: string;
+  tokenType?: string;
 }
 

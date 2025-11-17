@@ -23,13 +23,14 @@ export class AuthService {
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
       tap(response => {
-        if (response.id && response.username) {
+        if (response.id && response.username && response.accessToken) {
           const user: User = {
             id: response.id,
             username: response.username,
             email: response.email
           };
           this.setStoredUser(user);
+          this.setToken(response.accessToken);
           this.currentUserSubject.next(user);
         }
       })
@@ -39,13 +40,14 @@ export class AuthService {
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => {
-        if (response.id && response.username) {
+        if (response.id && response.username && response.accessToken) {
           const user: User = {
             id: response.id,
             username: response.username,
             email: response.email
           };
           this.setStoredUser(user);
+          this.setToken(response.accessToken);
           this.currentUserSubject.next(user);
         }
       })
@@ -54,7 +56,16 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('accessToken');
     this.currentUserSubject.next(null);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem('accessToken', token);
   }
 
   getCurrentUser(): User | null {
@@ -62,7 +73,9 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.getCurrentUser() !== null;
+    const token = this.getToken();
+    const user = this.getCurrentUser();
+    return token !== null && user !== null;
   }
 
   private getStoredUser(): User | null {

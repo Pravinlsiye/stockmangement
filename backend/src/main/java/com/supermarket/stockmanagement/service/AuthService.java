@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtService jwtService;
 
     public User register(String username, String password, String email) {
         // Check if username already exists
@@ -49,6 +50,10 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    public String generateToken(User user) {
+        return jwtService.generateToken(user.getId(), user.getEmail());
     }
 
     public boolean verifyPassword(String rawPassword, String hashedPassword) {

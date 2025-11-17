@@ -15,7 +15,10 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (this.authService.isAuthenticated()) {
+    const token = this.authService.getToken();
+    const user = this.authService.getCurrentUser();
+    
+    if (token && user && this.authService.isAuthenticated()) {
       return true;
     } else {
       // Store the attempted URL for redirecting after login
