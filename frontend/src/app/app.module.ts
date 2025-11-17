@@ -22,6 +22,7 @@ import { OrdersListComponent } from './components/orders-list/orders-list.compon
 import { NotificationComponent } from './components/notification/notification.component';
 import { BillsListComponent } from './components/bills-list/bills-list.component';
 import { BillDetailsComponent } from './components/bill-details/bill-details.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { BillDetailsComponent } from './components/bill-details/bill-details.com
     OrdersListComponent,
     NotificationComponent,
     BillsListComponent,
-    BillDetailsComponent
+    BillDetailsComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

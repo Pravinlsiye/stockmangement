@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navigation',
   template: `
     <nav class="navbar">
       <div class="nav-container">
-        <a routerLink="/" class="nav-brand">
+        <a routerLink="/dashboard" class="nav-brand">
           <div class="logo-wrapper">
             <img src="assets/logo.svg" alt="StockPro Logo" class="nav-logo">
           </div>
@@ -72,6 +74,19 @@ import { Component, OnInit } from '@angular/core';
                 <i class="fas fa-chart-line"></i>
                 <span>Reports</span>
               </a>
+            </li>
+            
+            <li class="nav-divider"></li>
+            
+            <li class="nav-item user-menu">
+              <a class="dropdown-toggle" (click)="toggleUserDropdown($event)">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ currentUser?.username || 'User' }}</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+              </a>
+              <ul class="dropdown-menu" [class.show]="showUserDropdown">
+                <li><a (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -287,6 +302,14 @@ import { Component, OnInit } from '@angular/core';
       color: #1976D2;
     }
     
+    .user-menu .dropdown-toggle {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .user-menu .dropdown-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
       .nav-container {
@@ -316,17 +339,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavigationComponent implements OnInit {
   showInventoryDropdown = false;
+  showUserDropdown = false;
+  currentUser: any = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    // Subscribe to current user
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      this.showInventoryDropdown = false;
+      this.showUserDropdown = false;
+    });
+  }
 
   toggleDropdown(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.showInventoryDropdown = !this.showInventoryDropdown;
+    this.showUserDropdown = false;
   }
 
-  // Close dropdown when clicking outside
-  ngOnInit() {
-    document.addEventListener('click', () => {
-      this.showInventoryDropdown = false;
-    });
+  toggleUserDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.showUserDropdown = !this.showUserDropdown;
+    this.showInventoryDropdown = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

@@ -28,6 +28,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
+        // Don't handle auth-related exceptions here - let AuthController handle them
+        // This handler will catch other RuntimeExceptions
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "INTERNAL_ERROR");
         errorResponse.put("message", ex.getMessage());
